@@ -1,0 +1,212 @@
+openapi: '3.0.0'
+info:
+  title: Sosmed API
+  version: '1.0'
+  description: ini adalah API backend Coupon
+  contact:
+    email: brillianfauzi@gmail.com 
+servers:
+  - url: https://virtserver.swaggerhub.com/BRILLIANFAUZI/test2/1.0.0
+tags:
+  - name: User
+paths:
+  /register:
+    post:
+      tags:
+        - User
+      summary: Register ke dalam sistem
+      description: This can only be done by the registered user.
+      operationId: registerUser
+      requestBody:
+        description: Register user object
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: joko
+                    password:
+                      type: string
+                      example: joko1212
+      responses:
+        '200':
+          description: Berhasil mendaftarkan User
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: joko
+                    password:
+                      type: string
+                      example: joko1212
+        '405':
+          description: Gagal Inputan salah
+  /login:
+    post:
+      tags:
+        - User
+      summary: Login ke dalam sistem
+      description: This can only be done by the logged in user.
+      operationId: loginUser
+      requestBody:
+        description: Login user object
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: joko
+                    password:
+                      type: string
+                      example: joko1212
+      responses:
+        '200':
+          description: Berhasil Login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: joko
+                    password:
+                      type: string
+                      example: joko1212
+        '405':
+          description: Gagal Inputan salah
+  /user/{username}:
+    get:
+      tags:
+        - User
+      summary: Get user by user name
+      description: This can only be done by the logged in user.
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+    put:
+      tags:
+        - User
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+
+        
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: Joko
+        email:
+          type: string
+          example: Joko@gmail.com
+        alamat:
+          type: string
+          example: Surabaya
+        desc_user:
+          type: string
+          example: Hai saya adalah joko 
+        gambar:
+          type: string
+          example: joko.png
+        password:
+          type: string
+          example: joko1212
