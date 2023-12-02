@@ -132,8 +132,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'          
-        '400':
-          description: Invalid username supplied
         '404':
           description: User not found
     put:
@@ -162,8 +160,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'          
-        '400':
-          description: Invalid username supplied
         '404':
           description: User not found
     delete:
@@ -182,17 +178,15 @@ paths:
       responses:
         '200':
           description: successful operation
-        '400':
-          description: Invalid username supplied
         '404':
           description: User not found
   /posting:
     post:
       tags:
         - Posting
-      summary: Posting ke dalam sosmed
+      summary: Posting ke dalam sosmed ( Wajib Login )
       description: This can only be done by the logged in user.
-      operationId: postingUser
+      operationId: postPosting
       requestBody:
         description: Login user object
         content:
@@ -208,7 +202,104 @@ paths:
                 $ref: '#/components/schemas/Posting' 
         '400':
           description: Invalid username supplied
-
+    get:
+      tags:
+        - Posting
+      summary: Get All posting ( Tanpa Login )
+      description: Tanpa Login
+      operationId: getPosting
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting' 
+        '400':
+          description: Invalid id posting
+  /posting/{id}:
+    get:
+      tags:
+        - Posting
+      summary: Get posting by id
+      description: This can only be done by the logged in user.
+      operationId: getPostingbyID
+      parameters:
+        - name: id
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting'          
+        '404':
+          description: Post not found
+    put:
+      tags:
+        - Posting
+      summary: Get posting by ID
+      description: This can only be done by the logged in user.
+      operationId: updatePostingbyID
+      parameters:
+        - name: id
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Edit Caption Posting object
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    caption:
+                      type: string
+                      example: We live we dream
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    caption:
+                      type: string
+                      example: We live we dream       
+        '404':
+          description: Post not found
+    delete:
+      tags:
+        - Posting
+      summary: Delete id
+      description: This can only be done by the logged in user.
+      operationId: deleteIdPost
+      parameters:
+        - name: id
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+            description: id not found
         
 
 components:
