@@ -138,7 +138,7 @@ paths:
     put:
       tags:
         - User
-      summary: Update user ( Wajib Login )
+      summary: Update user
       description: This can only be done by the logged in user.
       operationId: updateUser
       parameters:
@@ -163,10 +163,14 @@ paths:
                 $ref: '#/components/schemas/User'          
         '404':
           description: User not found
+      security:
+          - sosmed_auth:
+              - write:user
+              - read:user
     delete:
       tags:
         - User
-      summary: Delete user ( Wajib Login )
+      summary: Delete user
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
@@ -181,11 +185,15 @@ paths:
           description: successful operation
         '404':
           description: User not found
+      security:
+          - sosmed_auth:
+              - write:user
+              - delete:user
   /posting:
     post:
       tags:
         - Posting
-      summary: Posting ke dalam sosmed ( Wajib Login )
+      summary: Posting ke dalam sosmed
       description: This can only be done by the logged in user.
       operationId: postPosting
       requestBody:
@@ -213,6 +221,10 @@ paths:
                 $ref: '#/components/schemas/Posting' 
         '400':
           description: Invalid username supplied
+      security:
+          - sosmed_auth:
+              - write:posting
+              - read:posting
     get:
       tags:
         - Posting
@@ -254,7 +266,7 @@ paths:
     put:
       tags:
         - Posting
-      summary: Get posting by ID ( Wajib Login )
+      summary: Get posting by ID
       description: This can only be done by the logged in user.
       operationId: updatePostingbyID
       parameters:
@@ -293,10 +305,14 @@ paths:
                       example: We live we dream       
         '404':
           description: Posting not found
+      security:
+          - sosmed_auth:
+              - write:posting
+              - read:posting
     delete:
       tags:
         - Posting
-      summary: Delete id ( Wajib Login )
+      summary: Delete id
       description: This can only be done by the logged in user.
       operationId: deleteIdPost
       parameters:
@@ -311,11 +327,15 @@ paths:
           description: successful operation
         '404':
             description: posting not found
+      security:
+          - sosmed_auth:
+              - delete:posting
+              - read:posting
   /comment:
     post:
       tags:
         - Comment
-      summary: Comment ke dalam posting ( Wajib Login )
+      summary: Comment ke dalam posting
       description: This can only be done by the logged in user.
       operationId: postCommnet
       requestBody:
@@ -343,6 +363,10 @@ paths:
                 $ref: '#/components/schemas/Comment' 
         '400':
           description: Invalid username supplied
+      security:
+          - sosmed_auth:
+              - write:comment
+              - read:comment
     get:
       tags:
         - Comment
@@ -362,7 +386,7 @@ paths:
     delete:
       tags:
         - Comment
-      summary: Delete id Comment ( Wajib Login )
+      summary: Delete id Comment
       description: This can only be done by the logged in user.
       operationId: deleteIdComment
       parameters:
@@ -377,6 +401,10 @@ paths:
           description: successful operation
         '404':
             description: comment not found
+      security:
+          - sosmed_auth:
+              - delete:comment
+              - read:comment
 
 components:
   schemas:
@@ -404,6 +432,8 @@ components:
         password:
           type: string
           example: joko1212
+      xml:
+        name: user
     Posting:
       type: object
       properties:
@@ -422,6 +452,8 @@ components:
         user_id:
           type: integer
           example: 1
+      xml:
+        name: posting
     Comment:
       type: object
       properties:
@@ -437,3 +469,14 @@ components:
         isi_comment:
           type: string
           example: Postingan nya bagus !!!
+      xml:
+        name: comment
+  securitySchemes:
+    sosmed_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
