@@ -10,6 +10,7 @@ servers:
 tags:
   - name: User
   - name: Posting
+  - name: Comment
 paths:
   /register:
     post:
@@ -137,7 +138,7 @@ paths:
     put:
       tags:
         - User
-      summary: Update user
+      summary: Update user ( Wajib Login )
       description: This can only be done by the logged in user.
       operationId: updateUser
       parameters:
@@ -165,7 +166,7 @@ paths:
     delete:
       tags:
         - User
-      summary: Delete user
+      summary: Delete user ( Wajib Login )
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
@@ -188,11 +189,21 @@ paths:
       description: This can only be done by the logged in user.
       operationId: postPosting
       requestBody:
-        description: Login user object
+        description: Posting user object
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Posting'
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                caption:
+                  type: string
+                  example: We live we dream
+                gambar:
+                  type: string
+                  example: joko.png
       responses:
         '200':
           description: successful operation
@@ -239,11 +250,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Posting'          
         '404':
-          description: Post not found
+          description: Posting not found
     put:
       tags:
         - Posting
-      summary: Get posting by ID
+      summary: Get posting by ID ( Wajib Login )
       description: This can only be done by the logged in user.
       operationId: updatePostingbyID
       parameters:
@@ -281,11 +292,11 @@ paths:
                       type: string
                       example: We live we dream       
         '404':
-          description: Post not found
+          description: Posting not found
     delete:
       tags:
         - Posting
-      summary: Delete id
+      summary: Delete id ( Wajib Login )
       description: This can only be done by the logged in user.
       operationId: deleteIdPost
       parameters:
@@ -299,8 +310,73 @@ paths:
         '200':
           description: successful operation
         '404':
-            description: id not found
-        
+            description: posting not found
+  /comment:
+    post:
+      tags:
+        - Comment
+      summary: Comment ke dalam posting ( Wajib Login )
+      description: This can only be done by the logged in user.
+      operationId: postCommnet
+      requestBody:
+        description: Comment user object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                id_posting:
+                  type: integer
+                  example: 1
+                isi_comment:
+                  type: string
+                  example: Postingan nya bagus !!!
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment' 
+        '400':
+          description: Invalid username supplied
+    get:
+      tags:
+        - Comment
+      summary: Get All Comment ( Tanpa Login )
+      description: Get All comment tanpa login
+      operationId: getAllComment
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment' 
+        '400':
+          description: Invalid username supplied
+  /comment/{id}:
+    delete:
+      tags:
+        - Comment
+      summary: Delete id Comment ( Wajib Login )
+      description: This can only be done by the logged in user.
+      operationId: deleteIdComment
+      parameters:
+        - name: id
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+            description: comment not found
 
 components:
   schemas:
@@ -346,3 +422,18 @@ components:
         user_id:
           type: integer
           example: 1
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        id_posting:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        isi_comment:
+          type: string
+          example: Postingan nya bagus !!!
