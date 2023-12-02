@@ -4,11 +4,12 @@ info:
   version: '1.0'
   description: ini adalah API backend Coupon
   contact:
-    email: brillianfauzi@gmail.com 
+      email: brillianfauzi@gmail.com 
 servers:
-  - url: https://virtserver.swaggerhub.com/BRILLIANFAUZI/test2/1.0.0
+  - url: https://virtserver.swaggerhub.com/BRILLIANFAUZI/SosmedAPI/1.0
 tags:
   - name: User
+  - name: Posting
 paths:
   /register:
     post:
@@ -94,6 +95,22 @@ paths:
                       example: joko1212
         '405':
           description: Gagal Inputan salah
+  /user:
+      get:
+        tags:
+          - User
+        summary: Get user All
+        description: This can only be done by the logged in user.
+        operationId: getUserAll
+        responses:
+          '200':
+            description: successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/User'          
+          '404':
+            description: User not found
   /user/{username}:
     get:
       tags:
@@ -115,9 +132,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
         '400':
           description: Invalid username supplied
         '404':
@@ -141,12 +155,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: successful operation
@@ -154,9 +162,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
         '400':
           description: Invalid username supplied
         '404':
@@ -181,6 +186,28 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+  /posting:
+    post:
+      tags:
+        - Posting
+      summary: Posting ke dalam sosmed
+      description: This can only be done by the logged in user.
+      operationId: postingUser
+      requestBody:
+        description: Login user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Posting'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting' 
+        '400':
+          description: Invalid username supplied
 
         
 
@@ -210,3 +237,21 @@ components:
         password:
           type: string
           example: joko1212
+    Posting:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        caption:
+          type: string
+          example: We live we dream
+        gambar:
+          type: string
+          example: joko.png
+        total_comment:
+          type: integer
+          example: 80
+        user_id:
+          type: integer
+          example: 1
