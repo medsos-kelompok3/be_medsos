@@ -115,7 +115,7 @@ paths:
             content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/User'          
+                  $ref: '#/components/schemas/Response_Get'          
           '404':
             description: User not found
   /user/{username}:
@@ -138,7 +138,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'          
+                $ref: '#/components/schemas/Response_Get'          
         '404':
           description: User not found
     put:
@@ -434,12 +434,43 @@ components:
           example: Hai saya adalah joko 
         gambar:
           type: string
-          example: joko.png
+          example: image/joko.png
         password:
           type: string
           example: joko1212
       xml:
-        name: user
+        name: User
+    Response_Get:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: Joko
+        bio:
+          type: string
+          example: Hai saya adalah joko
+        gambar:
+          type: string
+          example: image/joko.png
+      xml:
+        name: response_get
+    Response_User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: Joko
+        gambar:
+          type: string
+          example: image/joko.png
+      xml:
+        name: response_user
     Posting:
       type: object
       properties:
@@ -451,7 +482,7 @@ components:
           example: We live we dream
         gambar:
           type: string
-          example: joko.png
+          example: image/joko.png
         total_comment:
           type: integer
           example: 80
@@ -470,25 +501,11 @@ components:
           example: We live we dream
         gambar:
           type: string
-          example: joko.png
+          example: image/joko.png
         user:
             $ref: '#/components/schemas/Response_User' 
       xml:
         name: posting
-    Response_User:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        username:
-          type: string
-          example: Joko
-        gambar:
-          type: string
-          example: image/joko.png
-      xml:
-        name: response_user
     Comment:
       type: object
       properties:
