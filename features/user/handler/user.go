@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	gojwt "github.com/golang-jwt/jwt/v5"
 	echo "github.com/labstack/echo/v4"
 )
 
@@ -63,6 +64,52 @@ func (uc *UserController) Login() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]any{
 			"message": "success login data",
 			"data":    response,
+		})
+	}
+}
+
+func (uc *UserController) GetListUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userid, err := jwt.ExtractToken(c.Get("user").(*gojwt.Token))
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, map[string]any{
+				"message": "tidak ada kuasa untuk mengakses",
+			})
+		}
+
+		return c.JSON(http.StatusOK, userid)
+	}
+}
+
+// GetAllUser implements user.Handler.
+func (uc *UserController) GetAllUserByUsername() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		username := c.Param("username")
+
+		user, err := uc.srv.DapatUser(username)
+		if err != nil {
+			c.Logger().Errorf("Failed to get user: %v", err)
+
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusNotFound, map[string]interface{}{
+					"message": "user not found",
+				})
+			}
+
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "internal server error",
+			})
+		}
+
+		var response = new(GetResponse)
+		response.ID = user.ID
+		response.Username = user.Username
+		response.Bio = user.Bio
+		response.Avatar = user.Avatar
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "user details",
+			"user":    response,
 		})
 	}
 }

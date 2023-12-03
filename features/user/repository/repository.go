@@ -41,3 +41,20 @@ func (uq *UserQuery) Login(username string) (user.User, error) {
 
 	return *result, nil
 }
+
+// GetUserByUsername implements user.Repository.
+func (uq *UserQuery) GetUserByUsername(username string) (user.User, error) {
+	var userModel UserModel
+	if err := uq.db.Where("username = ?", username).First(&userModel).Error; err != nil {
+		return user.User{}, err
+	}
+
+	result := user.User{
+		ID:       userModel.ID,
+		Username: userModel.Username,
+		Bio:      userModel.Bio,
+		Avatar:   userModel.Avatar,
+	}
+
+	return result, nil
+}

@@ -41,3 +41,12 @@ func (us *UserService) Login(username string, password string) (user.User, error
 
 	return result, nil
 }
+
+// DapatUser implements user.Service.
+func (us *UserService) DapatUser(username string) (user.User, error) {
+	result, err := us.repo.GetUserByUsername(username)
+	if err != nil {
+		return user.User{}, errors.New("failed to retrieve inserted Data")
+	}
+	return result, nil
+}

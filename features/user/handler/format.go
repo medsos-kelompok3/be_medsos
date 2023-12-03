@@ -10,3 +10,10 @@ type LoginResponse struct {
 	Username string `json:"username"`
 	Token    string `json:"token"`
 }
+
+type GetResponse struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Bio      string `json:"bio"`
+	Avatar   string `json:"avatar"`
+}
