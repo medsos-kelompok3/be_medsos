@@ -32,6 +32,12 @@ paths:
                     username:
                       type: string
                       example: joko
+                    email:
+                      type: string
+                      example: joko@gmail.com
+                    adress:
+                      type: string
+                      example: Surabaya
                     password:
                       type: string
                       example: joko1212
@@ -420,10 +426,10 @@ components:
         email:
           type: string
           example: Joko@gmail.com
-        alamat:
+        adress:
           type: string
           example: Surabaya
-        desc_user:
+        bio:
           type: string
           example: Hai saya adalah joko 
         gambar:
@@ -449,23 +455,50 @@ components:
         total_comment:
           type: integer
           example: 80
-        user_id:
-          type: integer
-          example: 1
+        user:
+            $ref: '#/components/schemas/Response_User' 
       xml:
         name: posting
+    Response_Posting:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        caption:
+          type: string
+          example: We live we dream
+        gambar:
+          type: string
+          example: joko.png
+        user:
+            $ref: '#/components/schemas/Response_User' 
+      xml:
+        name: posting
+    Response_User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: Joko
+        gambar:
+          type: string
+          example: image/joko.png
+      xml:
+        name: response_user
     Comment:
       type: object
       properties:
         id:
           type: integer
           example: 1
-        id_posting:
-          type: integer
-          example: 1
-        user_id:
-          type: integer
-          example: 1
+        posting:
+              $ref: '#/components/schemas/Response_Posting' 
+        user:
+              $ref: '#/components/schemas/Response_User' 
         isi_comment:
           type: string
           example: Postingan nya bagus !!!
@@ -476,7 +509,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
