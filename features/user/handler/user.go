@@ -61,7 +61,7 @@ func (uc *UserController) Login() echo.HandlerFunc {
 		response.Token = strToken
 
 		return c.JSON(http.StatusOK, map[string]any{
-			"message": "success create data",
+			"message": "success login data",
 			"data":    response,
 		})
 	}
