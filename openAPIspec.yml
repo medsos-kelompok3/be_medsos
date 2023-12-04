@@ -127,7 +127,9 @@ paths:
           schema:
             type: string
       security:
-      - bearerAuth: []
+          - sosmed_auth:
+              - write:user
+              - read:user
       responses:
         '200':
           description: successful operation
@@ -166,7 +168,6 @@ paths:
         '404':
           description: User not found
       security:
-          - bearer_auth: []
           - sosmed_auth:
               - write:user
               - read:user
@@ -189,7 +190,6 @@ paths:
         '404':
           description: User not found
       security:
-          - bearer_auth: []
           - sosmed_auth:
               - write:user
               - delete:user
@@ -226,7 +226,6 @@ paths:
         '400':
           description: Invalid username supplied
       security:
-          - bearer_auth: []
           - sosmed_auth:
               - write:posting
               - read:posting
@@ -260,7 +259,9 @@ paths:
           schema:
             type: string
       security:
-          - bearer_auth: []
+          - sosmed_auth:
+              - write:posting
+              - read:posting
       responses:
         '200':
           description: successful operation
@@ -313,7 +314,6 @@ paths:
         '404':
           description: Posting not found
       security:
-          - bearer_auth: []
           - sosmed_auth:
               - write:posting
               - read:posting
@@ -336,7 +336,6 @@ paths:
         '404':
             description: posting not found
       security:
-          - bearer_auth: []
           - sosmed_auth:
               - delete:posting
               - read:posting
@@ -373,7 +372,6 @@ paths:
         '400':
           description: Invalid username supplied
       security:
-          - bearer_auth: []
           - sosmed_auth:
               - write:comment
               - read:comment
@@ -412,7 +410,6 @@ paths:
         '404':
             description: comment not found
       security:
-          - bearer_auth: []
           - sosmed_auth:
               - delete:comment
               - read:comment
