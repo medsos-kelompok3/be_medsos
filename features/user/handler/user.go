@@ -21,6 +21,37 @@ func New(s user.Service) user.Handler {
 	}
 }
 
+func (uc *UserController) Register() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(RegisterReq)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+		var processInput = new(user.User)
+		processInput.Username = input.Username
+		processInput.Email = input.Email
+		processInput.Address = input.Address
+		processInput.Password = input.Password
+		result, err := uc.srv.AddUser(*processInput)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "eror repo",
+			})
+		}
+		var responseInput = new(RegisResponse)
+		responseInput.ID = result.ID
+
+		responseInput.Username = result.Username
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "success login data",
+			"data":    responseInput,
+		})
+	}
+}
+
 // Login implements user.Handler.
 func (uc *UserController) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
