@@ -20,6 +20,7 @@ type Handler interface {
 	Login() echo.HandlerFunc
 	GetAllUserByUsername() echo.HandlerFunc
 	Delete() echo.HandlerFunc
+	Update() echo.HandlerFunc
 }
 
 type Service interface {
@@ -27,6 +28,7 @@ type Service interface {
 	Login(username string, password string) (User, error)
 	DapatUser(username string) (User, error)
 	HapusUser(token *jwt.Token, userID uint) error
+	UpdateUser(token *jwt.Token, input User) (User, error)
 }
 
 type Repository interface {
@@ -35,4 +37,5 @@ type Repository interface {
 	GetUserByUsername(username string) (User, error)
 	GetUserByID(userID uint) (*User, error)
 	DeleteUser(userID uint) error
+	UpdateUser(input User) (User, error)
 }

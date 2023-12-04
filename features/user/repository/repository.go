@@ -26,6 +26,7 @@ func New(db *gorm.DB) user.Repository {
 	}
 }
 
+// add new user
 func (uq *UserQuery) AddUser(input user.User) (user.User, error) {
 	var newUser = new(UserModel)
 	newUser.Username = input.Username
@@ -109,6 +110,46 @@ func (uq *UserQuery) GetUserByID(userID uint) (*user.User, error) {
 		Address:  userModel.Address,
 		Avatar:   userModel.Avatar,
 		Password: userModel.Password,
+	}
+
+	return result, nil
+}
+
+func (uq *UserQuery) UpdateUser(input user.User) (user.User, error) {
+	var proses UserModel
+	if err := uq.db.First(&proses, input.ID).Error; err != nil {
+		return user.User{}, err
+	}
+
+	// Jika tidak ada buku ditemukan
+	if proses.ID == 0 {
+		return user.User{}, nil
+	}
+
+	if input.Email != "" {
+		proses.Email = input.Email
+	}
+	if input.Bio != "" {
+		proses.Bio = input.Bio
+	}
+	if input.Avatar != "" {
+		proses.Avatar = input.Avatar
+	}
+
+	if input.Address != "" {
+		proses.Address = input.Address
+	}
+	if err := uq.db.Save(&proses).Error; err != nil {
+
+		return user.User{}, err
+	}
+	result := user.User{
+		ID:       proses.ID,
+		Username: proses.Username,
+		Email:    proses.Email,
+		Address:  proses.Address,
+		Avatar:   proses.Avatar,
+		Password: proses.Password,
 	}
 
 	return result, nil
