@@ -1,5 +1,7 @@
 package handler
 
+import "mime/multipart"
+
 type RegisterReq struct {
 	Username string `json:"username" form:"username"`
 	Email    string `json:"email" form:"email"`
@@ -28,4 +30,22 @@ type GetResponse struct {
 	Username string `json:"username"`
 	Bio      string `json:"bio"`
 	Avatar   string `json:"avatar"`
+}
+
+type PutRequest struct {
+	ID       uint           `json:"id" form:"id"`
+	Username string         `json:"username" form:"username"`
+	Email    string         `json:"email" form:"email"`
+	Address  string         `json:"address" form:"address"`
+	Bio      string         `json:"bio" form:"bio"`
+	Avatar   multipart.File `json:"avatar" form:"avatar"`
+}
+
+type PutResponse struct {
+	ID       uint   `json:"id" form:"id"`
+	Username string `json:"username" form:"username"`
+	Email    string `json:"email" form:"email"`
+	Address  string `json:"address" form:"address"`
+	Bio      string `json:"bio" form:"bio"`
+	Avatar   string `json:"avatar" form:"avatar"`
 }

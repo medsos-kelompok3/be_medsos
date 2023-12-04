@@ -115,15 +115,15 @@ func (uq *UserQuery) GetUserByID(userID uint) (*user.User, error) {
 	return result, nil
 }
 
-func (uq *UserQuery) UpdateUser(input user.User) (*user.User, error) {
+func (uq *UserQuery) UpdateUser(input user.User) (user.User, error) {
 	var proses UserModel
 	if err := uq.db.First(&proses, input.ID).Error; err != nil {
-		return nil, err
+		return user.User{}, err
 	}
 
 	// Jika tidak ada buku ditemukan
 	if proses.ID == 0 {
-		return nil, nil
+		return user.User{}, nil
 	}
 
 	if input.Email != "" {
@@ -141,9 +141,9 @@ func (uq *UserQuery) UpdateUser(input user.User) (*user.User, error) {
 	}
 	if err := uq.db.Save(&proses).Error; err != nil {
 
-		return nil, err
+		return user.User{}, err
 	}
-	result := &user.User{
+	result := user.User{
 		ID:       proses.ID,
 		Username: proses.Username,
 		Email:    proses.Email,

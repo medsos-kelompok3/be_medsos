@@ -93,3 +93,22 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 
 	return nil
 }
+
+// update user
+func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user.User, error) {
+	userID, err := jwt.ExtractToken(token)
+	if err != nil {
+		return user.User{}, errors.New("harap login")
+	}
+	if userID != input.ID {
+
+		return user.User{}, errors.New("id tidak cocok")
+	}
+	respons, err := us.repo.UpdateUser(input)
+	if err != nil {
+
+		return user.User{}, errors.New("kesalahan pada database")
+	}
+	return respons, nil
+
+}

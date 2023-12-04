@@ -7,6 +7,7 @@ import (
 	us "be_medsos/features/user/service"
 	ek "be_medsos/helper/enkrip"
 	"be_medsos/routes"
+	cld "be_medsos/utils/cld"
 	"be_medsos/utils/database"
 
 	"github.com/labstack/echo/v4"
@@ -18,6 +19,7 @@ func main() {
 	if cfg == nil {
 		e.Logger.Fatal("tidak bisa start server kesalahan database")
 	}
+	cld, ctx, param := cld.InitCloudnr(*cfg)
 
 	db, err := database.InitMySql(*cfg)
 	if err != nil {
@@ -29,7 +31,7 @@ func main() {
 	ekrip := ek.New()
 	userRepo := ur.New(db)
 	userService := us.New(userRepo, ekrip)
-	userHandler := uh.New(userService)
+	userHandler := uh.New(userService, cld, ctx, param)
 
 	routes.InitRoute(e, userHandler)
 

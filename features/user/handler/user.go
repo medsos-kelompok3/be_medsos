@@ -3,21 +3,30 @@ package handler
 import (
 	"be_medsos/features/user"
 	"be_medsos/helper/jwt"
+	cld "be_medsos/utils/cld"
+	"context"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"github.com/cloudinary/cloudinary-go/v2"
 	gojwt "github.com/golang-jwt/jwt/v5"
 	echo "github.com/labstack/echo/v4"
 )
 
 type UserController struct {
-	srv user.Service
+	srv    user.Service
+	cl     *cloudinary.Cloudinary
+	ct     context.Context
+	folder string
 }
 
-func New(s user.Service) user.Handler {
+func New(s user.Service, cld *cloudinary.Cloudinary, ctx context.Context, uploadparam string) user.Handler {
 	return &UserController{
-		srv: s,
+		srv:    s,
+		cl:     cld,
+		ct:     ctx,
+		folder: uploadparam,
 	}
 }
 
@@ -177,6 +186,87 @@ func (uc *UserController) Delete() echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success delete user",
+		})
+	}
+}
+
+// update
+func (uc *UserController) Update() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(PutRequest)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+		formHeader, err := c.FormFile("avatar")
+		if err != nil {
+			return c.JSON(
+				http.StatusInternalServerError, map[string]any{
+					"message": "formheader error",
+				})
+
+		}
+
+		formFile, err := formHeader.Open()
+		if err != nil {
+			return c.JSON(
+				http.StatusInternalServerError, map[string]any{
+					"message": "formfile error",
+				})
+		}
+
+		link, err := cld.UploadImage(uc.cl, uc.ct, formFile, uc.folder)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"message": "harap pilih gambar",
+					"data":    nil,
+				})
+			} else {
+				return c.JSON(http.StatusInternalServerError, map[string]any{
+					"message": "kesalahan pada server",
+					"data":    nil,
+				})
+			}
+		}
+
+		var inputProcess = new(user.User)
+		inputProcess.Avatar = link
+		inputProcess.ID = input.ID
+		inputProcess.Address = input.Address
+
+		inputProcess.Bio = input.Bio
+		inputProcess.Email = input.Email
+
+		result, err := uc.srv.UpdateUser(c.Get("user").(*gojwt.Token), *inputProcess)
+
+		if err != nil {
+			c.Logger().Error("ERROR Register, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika memproses data"
+
+			if strings.Contains(err.Error(), "terdaftar") {
+				statusCode = http.StatusBadRequest
+				message = "data yang diinputkan sudah terdaftar ada sistem"
+			}
+
+			return c.JSON(statusCode, map[string]any{
+				"message": message,
+			})
+		}
+
+		var response = new(PutResponse)
+		response.ID = result.ID
+		response.Username = result.Username
+		response.Email = result.Email
+		response.Bio = result.Bio
+		response.Address = result.Address
+		response.Avatar = result.Avatar
+
+		return c.JSON(http.StatusCreated, map[string]any{
+			"message": "success create data",
+			"data":    response,
 		})
 	}
 }
