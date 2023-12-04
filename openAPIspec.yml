@@ -1,0 +1,537 @@
+openapi: '3.0.0'
+info:
+  title: Sosmed API
+  version: '1.0'
+  description: ini adalah API backend Coupon
+  contact:
+      email: brillianfauzi@gmail.com 
+servers:
+  - url: https://virtserver.swaggerhub.com/BRILLIANFAUZI/SosmedAPI/1.0
+tags:
+  - name: User
+  - name: Posting
+  - name: Comment
+paths:
+  /register:
+    post:
+      tags:
+        - User
+      summary: Register ke dalam sistem
+      description: This can only be done by the registered user.
+      operationId: registerUser
+      requestBody:
+        description: Register user object
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: joko
+                    email:
+                      type: string
+                      example: joko@gmail.com
+                    adress:
+                      type: string
+                      example: Surabaya
+                    password:
+                      type: string
+                      example: joko1212
+      responses:
+        '200':
+          description: Berhasil mendaftarkan User
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: joko
+        '405':
+          description: Gagal Inputan salah
+  /login:
+    post:
+      tags:
+        - User
+      summary: Login ke dalam sistem
+      description: This can only be done by the logged in user.
+      operationId: loginUser
+      requestBody:
+        description: Login user object
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                    username:
+                      type: string
+                      example: joko
+                    password:
+                      type: string
+                      example: joko1212
+      responses:
+        '200':
+          description: Berhasil Login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: joko
+                    token:
+                      type: string
+                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDE2MDU5OTgzNTMsImlhdCI6MTcwMTYwNTk5ODM1MiwiaWQiOjF9.vFsLrkcLzwzGQwmGTDnD0bNeDxyrI-6ouUgMYDtsomA
+        '405':
+          description: Gagal Inputan salah
+  /user:
+      get:
+        tags:
+          - User
+        summary: Get user All
+        description: This can only be done by the logged in user.
+        operationId: getUserAll
+        responses:
+          '200':
+            description: successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Response_Get'          
+          '404':
+            description: User not found
+  /user/{username}:
+    get:
+      tags:
+        - User
+      summary: Get user by user name
+      description: This can only be done by the logged in user.
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      security:
+          - sosmed_auth:
+              - write:user
+              - read:user
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response_Get'          
+        '404':
+          description: User not found
+    put:
+      tags:
+        - User
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+        '404':
+          description: User not found
+      security:
+          - sosmed_auth:
+              - write:user
+              - read:user
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: User not found
+      security:
+          - sosmed_auth:
+              - write:user
+              - delete:user
+  /posting:
+    post:
+      tags:
+        - Posting
+      summary: Posting ke dalam sosmed
+      description: This can only be done by the logged in user.
+      operationId: postPosting
+      requestBody:
+        description: Posting user object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                caption:
+                  type: string
+                  example: We live we dream
+                gambar:
+                  type: string
+                  example: joko.png
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting' 
+        '400':
+          description: Invalid username supplied
+      security:
+          - sosmed_auth:
+              - write:posting
+              - read:posting
+    get:
+      tags:
+        - Posting
+      summary: Get All posting ( Tanpa Login )
+      description: Tanpa Login
+      operationId: getPosting
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting' 
+        '400':
+          description: Invalid id posting
+  /posting/{id}:
+    get:
+      tags:
+        - Posting
+      summary: Get posting by id
+      description: This can only be done by the logged in user.
+      operationId: getPostingbyID
+      parameters:
+        - name: id
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      security:
+          - sosmed_auth:
+              - write:posting
+              - read:posting
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting'          
+        '404':
+          description: Posting not found
+    put:
+      tags:
+        - Posting
+      summary: Get posting by ID
+      description: This can only be done by the logged in user.
+      operationId: updatePostingbyID
+      parameters:
+        - name: id
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Edit Caption Posting object
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    caption:
+                      type: string
+                      example: We live we dream
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 1
+                    caption:
+                      type: string
+                      example: We live we dream       
+        '404':
+          description: Posting not found
+      security:
+          - sosmed_auth:
+              - write:posting
+              - read:posting
+    delete:
+      tags:
+        - Posting
+      summary: Delete id
+      description: This can only be done by the logged in user.
+      operationId: deleteIdPost
+      parameters:
+        - name: id
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+            description: posting not found
+      security:
+          - sosmed_auth:
+              - delete:posting
+              - read:posting
+  /comment:
+    post:
+      tags:
+        - Comment
+      summary: Comment ke dalam posting
+      description: This can only be done by the logged in user.
+      operationId: postCommnet
+      requestBody:
+        description: Comment user object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                id_posting:
+                  type: integer
+                  example: 1
+                isi_comment:
+                  type: string
+                  example: Postingan nya bagus !!!
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment' 
+        '400':
+          description: Invalid username supplied
+      security:
+          - sosmed_auth:
+              - write:comment
+              - read:comment
+    get:
+      tags:
+        - Comment
+      summary: Get All Comment ( Tanpa Login )
+      description: Get All comment tanpa login
+      operationId: getAllComment
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment' 
+        '400':
+          description: Invalid username supplied
+  /comment/{id}:
+    delete:
+      tags:
+        - Comment
+      summary: Delete id Comment
+      description: This can only be done by the logged in user.
+      operationId: deleteIdComment
+      parameters:
+        - name: id
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+            description: comment not found
+      security:
+          - sosmed_auth:
+              - delete:comment
+              - read:comment
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: Joko
+        email:
+          type: string
+          example: joko@gmail.com
+        adress:
+          type: string
+          example: Surabaya
+        bio:
+          type: string
+          example: Hai saya adalah joko 
+        gambar:
+          type: string
+          example: image/joko.png
+        password:
+          type: string
+          example: joko1212
+      xml:
+        name: User
+    Response_Get:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: Joko
+        email:
+          type: string
+          example: joko@gmail.com
+        adress:
+          type: string
+          example: Surabaya
+        bio:
+          type: string
+          example: Hai saya adalah joko
+        gambar:
+          type: string
+          example: image/joko.png
+      xml:
+        name: response_get
+   
+    Response_User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: Joko
+        gambar:
+          type: string
+          example: image/joko.png
+      xml:
+        name: response_user
+    Posting:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        caption:
+          type: string
+          example: We live we dream
+        gambar:
+          type: string
+          example: image/joko.png
+        total_comment:
+          type: integer
+          example: 80
+        user:
+            $ref: '#/components/schemas/Response_User' 
+      xml:
+        name: posting
+    Response_Posting:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        caption:
+          type: string
+          example: We live we dream
+        gambar:
+          type: string
+          example: image/joko.png
+        user:
+            $ref: '#/components/schemas/Response_User' 
+      xml:
+        name: posting
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        posting:
+              $ref: '#/components/schemas/Response_Posting' 
+        user:
+              $ref: '#/components/schemas/Response_User' 
+        isi_comment:
+          type: string
+          example: Postingan nya bagus !!!
+      xml:
+        name: comment
+  securitySchemes:
+    sosmed_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
