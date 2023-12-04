@@ -55,9 +55,6 @@ paths:
                     username:
                       type: string
                       example: joko
-                    password:
-                      type: string
-                      example: joko1212
         '405':
           description: Gagal Inputan salah
   /login:
@@ -74,9 +71,6 @@ paths:
             schema:
                 type: object
                 properties:
-                    id:
-                      type: integer
-                      example: 1
                     username:
                       type: string
                       example: joko
@@ -97,9 +91,9 @@ paths:
                     username:
                       type: string
                       example: joko
-                    password:
+                    token:
                       type: string
-                      example: joko1212
+                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDE2MDU5OTgzNTMsImlhdCI6MTcwMTYwNTk5ODM1MiwiaWQiOjF9.vFsLrkcLzwzGQwmGTDnD0bNeDxyrI-6ouUgMYDtsomA
         '405':
           description: Gagal Inputan salah
   /user:
@@ -425,7 +419,7 @@ components:
           example: Joko
         email:
           type: string
-          example: Joko@gmail.com
+          example: joko@gmail.com
         adress:
           type: string
           example: Surabaya
@@ -449,6 +443,12 @@ components:
         username:
           type: string
           example: Joko
+        email:
+          type: string
+          example: joko@gmail.com
+        adress:
+          type: string
+          example: Surabaya
         bio:
           type: string
           example: Hai saya adalah joko
@@ -457,6 +457,7 @@ components:
           example: image/joko.png
       xml:
         name: response_get
+   
     Response_User:
       type: object
       properties:
