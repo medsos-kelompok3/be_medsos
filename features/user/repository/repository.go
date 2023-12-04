@@ -58,3 +58,42 @@ func (uq *UserQuery) GetUserByUsername(username string) (user.User, error) {
 
 	return result, nil
 }
+
+// DeleteUser implements user.Repository.
+func (uq *UserQuery) DeleteUser(userID uint) error {
+	var exitingUser UserModel
+
+	if err := uq.db.First(&exitingUser, userID).Error; err != nil {
+		return err
+	}
+
+	if err := uq.db.Delete(&exitingUser).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetUserByID implements user.Repository.
+func (uq *UserQuery) GetUserByID(userID uint) (*user.User, error) {
+	var userModel UserModel
+	if err := uq.db.First(&userModel, userID).Error; err != nil {
+		return nil, err
+	}
+
+	// Jika tidak ada buku ditemukan
+	if userModel.ID == 0 {
+		return nil, nil
+	}
+
+	result := &user.User{
+		ID:       userModel.ID,
+		Username: userModel.Username,
+		Email:    userModel.Email,
+		Address:  userModel.Address,
+		Avatar:   userModel.Avatar,
+		Password: userModel.Password,
+	}
+
+	return result, nil
+}
