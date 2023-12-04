@@ -22,6 +22,18 @@ func New(r user.Repository, h enkrip.HashInterface) user.Service {
 	}
 }
 
+func (us *UserService) AddUser(input user.User) (user.User, error) {
+	if input.Username == "" || input.Password == "" {
+		return user.User{}, errors.New("username and password are required")
+	}
+	result, err := us.repo.AddUser(input)
+	if err != nil {
+
+		return user.User{}, errors.New("terjadi kesalahan pada sistem")
+	}
+	return result, nil
+}
+
 // Login implements user.Service.
 func (us *UserService) Login(username string, password string) (user.User, error) {
 	if username == "" || password == "" {

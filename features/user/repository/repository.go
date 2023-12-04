@@ -26,6 +26,22 @@ func New(db *gorm.DB) user.Repository {
 	}
 }
 
+func (uq *UserQuery) AddUser(input user.User) (user.User, error) {
+	var newUser = new(UserModel)
+	newUser.Username = input.Username
+	newUser.Email = input.Email
+	newUser.Password = input.Password
+	newUser.Address = input.Address
+	if err := uq.db.Create(&newUser).Error; err != nil {
+		return user.User{}, err
+	}
+	var result = new(user.User)
+	result.ID = newUser.ID
+	result.Username = newUser.Username
+
+	return *result, nil
+}
+
 // Login implements user.Repository.
 func (uq *UserQuery) Login(username string) (user.User, error) {
 	var userData = new(UserModel)

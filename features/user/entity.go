@@ -16,18 +16,21 @@ type User struct {
 }
 
 type Handler interface {
+	Register() echo.HandlerFunc
 	Login() echo.HandlerFunc
 	GetAllUserByUsername() echo.HandlerFunc
 	Delete() echo.HandlerFunc
 }
 
 type Service interface {
+	AddUser(input User) (User, error)
 	Login(username string, password string) (User, error)
 	DapatUser(username string) (User, error)
 	HapusUser(token *jwt.Token, userID uint) error
 }
 
 type Repository interface {
+	AddUser(input User) (User, error)
 	Login(username string) (User, error)
 	GetUserByUsername(username string) (User, error)
 	GetUserByID(userID uint) (*User, error)
