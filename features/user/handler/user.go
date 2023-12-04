@@ -23,7 +23,7 @@ func New(s user.Service) user.Handler {
 
 func (uc *UserController) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var input RegisterReq
+		var input = new(RegisterReq)
 		if err := c.Bind(input); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "input yang diberikan tidak sesuai",

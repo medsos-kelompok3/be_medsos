@@ -26,6 +26,13 @@ func (us *UserService) AddUser(input user.User) (user.User, error) {
 	if input.Username == "" || input.Password == "" {
 		return user.User{}, errors.New("username and password are required")
 	}
+	ePassword, err := us.h.HashPassword(input.Password)
+
+	if err != nil {
+		return user.User{}, errors.New("terdapat masalah saat memproses data")
+	}
+	input.Password = ePassword
+
 	result, err := us.repo.AddUser(input)
 	if err != nil {
 
