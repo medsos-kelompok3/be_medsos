@@ -3,6 +3,7 @@ package repository
 import (
 	"be_medsos/features/posting"
 	pu "be_medsos/features/user"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -19,18 +20,18 @@ type PostingQuery struct {
 }
 
 // InsertPosting implements posting.Repository.
-func (pq *PostingQuery) InsertPosting(userName string, newPosting posting.Posting) (posting.Posting, error) {
+func (pq *PostingQuery) InsertPosting(userID uint, newPosting posting.Posting) (posting.Posting, error) {
 	var inputDB = new(PostingModel)
 	inputDB.Caption = newPosting.Caption
 	inputDB.GambarPosting = newPosting.GambarPosting
 
 	var user pu.User
-	if err := pq.db.Where("Username = ?", userName).First(&user).Error; err != nil {
-		// Handle error
+	if err := pq.db.First(&user, user.ID).Error; err != nil {
+		fmt.Println("Error mengambil data customer:", err)
 		return posting.Posting{}, err
 	}
-	newPosting.UserName = user.Username
-	// Simpan posting ke dalam database
+	inputDB.UserName = user.Username
+
 	if err := pq.db.Create(&newPosting).Error; err != nil {
 		// Handle error saat menyimpan posting ke dalam database
 		return posting.Posting{}, err

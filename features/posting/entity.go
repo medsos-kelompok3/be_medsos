@@ -21,5 +21,5 @@ type Service interface {
 }
 
 type Repository interface {
-	InsertPosting(userName string, newPosting Posting) (Posting, error)
+	InsertPosting(userID uint, newPosting Posting) (Posting, error)
 }

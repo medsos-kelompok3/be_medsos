@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
-	gojwt "github.com/golang-jwt/jwt/v5"
+	gojwt "github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 )
 
