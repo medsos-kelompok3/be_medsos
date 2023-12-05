@@ -19,6 +19,15 @@ func New(model posting.Repository) posting.Service {
 	}
 }
 
+// SemuaPosting implements posting.Service.
+func (ps *PostingService) SemuaPosting(page int, limit int) ([]posting.Posting, error) {
+	result, err := ps.r.GetTanpaPosting(page, limit)
+	if err != nil {
+		return nil, errors.New("failed to retrieve inserted coupon")
+	}
+	return result, nil
+}
+
 // AddPosting implements posting.Service.
 func (ps *PostingService) AddPosting(token *golangjwt.Token, newPosting posting.Posting) (posting.Posting, error) {
 	userId, err := jwt.ExtractToken(token)

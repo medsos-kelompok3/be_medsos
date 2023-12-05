@@ -19,6 +19,25 @@ type PostingQuery struct {
 	db *gorm.DB
 }
 
+// GetTanpaPosting implements posting.Repository.
+func (pq *PostingQuery) GetTanpaPosting(page int, limit int) ([]posting.Posting, error) {
+	var postings []PostingModel
+	offset := (page - 1) * limit
+	if err := pq.db.Offset(offset).Limit(limit).Find(&postings).Error; err != nil {
+		return nil, err
+	}
+	var result []posting.Posting
+	for _, s := range postings {
+		result = append(result, posting.Posting{
+			ID:            s.ID,
+			Caption:       s.Caption,
+			GambarPosting: s.GambarPosting,
+			UserName:      s.UserName,
+		})
+	}
+	return result, nil
+}
+
 // InsertPosting implements posting.Repository.
 func (pq *PostingQuery) InsertPosting(userID uint, newPosting posting.Posting) (posting.Posting, error) {
 	var inputDB = new(PostingModel)

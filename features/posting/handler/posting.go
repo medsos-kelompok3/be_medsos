@@ -5,6 +5,7 @@ import (
 	cld "be_medsos/utils/cld"
 	"context"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
@@ -25,6 +26,42 @@ func New(p posting.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 		cl:     cld,
 		ct:     ctx,
 		folder: uploadparam,
+	}
+}
+
+// GetAll implements posting.Handler.
+func (pc *PostingController) GetAll() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if page <= 0 {
+			page = 1
+		}
+		limit, _ := strconv.Atoi(c.QueryParam("limit"))
+		if limit <= 0 {
+			limit = 5
+		}
+		results, err := pc.p.SemuaPosting(page, limit)
+		if err != nil {
+			c.Logger().Error("Error fetching coupons: ", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Failed to retrieve coupon data",
+			})
+		}
+		var response []PostingResponse
+		for _, result := range results {
+			response = append(response, PostingResponse{
+				ID:            result.ID,
+				Caption:       result.Caption,
+				GambarPosting: result.GambarPosting,
+				UserName:      result.UserName,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message":    "Success fetching all coupon data",
+			"data":       response,
+			"pagination": map[string]interface{}{"page": page, "limit": limit},
+		})
 	}
 }
 
