@@ -20,6 +20,81 @@ type PostingController struct {
 	folder string
 }
 
+// Update implements posting.Handler.
+func (pc *PostingController) Update() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(PostingRequest)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+		formHeader, err := c.FormFile("avatar")
+		if err != nil {
+			return c.JSON(
+				http.StatusInternalServerError, map[string]any{
+					"message": "formheader error",
+				})
+
+		}
+
+		formFile, err := formHeader.Open()
+		if err != nil {
+			return c.JSON(
+				http.StatusInternalServerError, map[string]any{
+					"message": "formfile error",
+				})
+		}
+
+		link, err := cld.UploadImage(pc.cl, pc.ct, formFile, pc.folder)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"message": "harap pilih gambar",
+					"data":    nil,
+				})
+			} else {
+				return c.JSON(http.StatusInternalServerError, map[string]any{
+					"message": "kesalahan pada server",
+					"data":    nil,
+				})
+			}
+		}
+
+		var inputProcess = new(posting.Posting)
+		inputProcess.GambarPosting = link
+
+		result, err := pc.p.UpdatePosting(c.Get("user").(*golangjwt.Token), *inputProcess)
+
+		if err != nil {
+			c.Logger().Error("ERROR Register, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika memproses data"
+
+			if strings.Contains(err.Error(), "terdaftar") {
+				statusCode = http.StatusBadRequest
+				message = "data yang diinputkan sudah terdaftar ada sistem"
+			}
+
+			return c.JSON(statusCode, map[string]any{
+				"message": message,
+			})
+		}
+
+		var response = new(PostingResponse)
+		response.ID = result.ID
+		response.Caption = result.Caption
+		response.GambarPosting = result.GambarPosting
+		response.UserName = result.UserName
+
+		return c.JSON(http.StatusCreated, map[string]any{
+			"message": "success create data",
+			"data":    response,
+		})
+
+	}
+}
+
 func New(p posting.Service, cld *cloudinary.Cloudinary, ctx context.Context, uploadparam string) posting.Handler {
 	return &PostingController{
 		p:      p,

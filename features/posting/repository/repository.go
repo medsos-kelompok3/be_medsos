@@ -19,6 +19,42 @@ type PostingQuery struct {
 	db *gorm.DB
 }
 
+// UpdatePosting implements posting.Repository.
+func (pq *PostingQuery) UpdatePosting(input posting.Posting) (posting.Posting, error) {
+	var proses PostingModel
+	if err := pq.db.First(&proses, input.ID).Error; err != nil {
+		return posting.Posting{}, err
+	}
+
+	// Jika tidak ada buku ditemukan
+	if proses.ID == 0 {
+		return posting.Posting{}, nil
+	}
+
+	if input.Caption != "" {
+		proses.Caption = input.Caption
+	}
+	if input.GambarPosting != "" {
+		proses.GambarPosting = input.GambarPosting
+	}
+	if input.UserName != "" {
+		proses.UserName = input.UserName
+	}
+
+	if err := pq.db.Save(&proses).Error; err != nil {
+
+		return posting.Posting{}, err
+	}
+	result := posting.Posting{
+		ID:            proses.ID,
+		Caption:       proses.Caption,
+		GambarPosting: proses.GambarPosting,
+		UserName:      proses.UserName,
+	}
+
+	return result, nil
+}
+
 // GetTanpaPosting implements posting.Repository.
 func (pq *PostingQuery) GetTanpaPosting(page int, limit int) ([]posting.Posting, error) {
 	var postings []PostingModel
