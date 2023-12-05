@@ -2,7 +2,7 @@ package repository
 
 import (
 	"be_medsos/features/posting"
-	pu "be_medsos/features/user"
+	pr "be_medsos/features/user/repository"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -25,17 +25,20 @@ func (pq *PostingQuery) InsertPosting(userID uint, newPosting posting.Posting) (
 	inputDB.Caption = newPosting.Caption
 	inputDB.GambarPosting = newPosting.GambarPosting
 
-	var user pu.User
-	if err := pq.db.First(&user, user.ID).Error; err != nil {
+	var user pr.UserModel
+	if err := pq.db.First(&user, userID).Error; err != nil {
 		fmt.Println("Error mengambil data customer:", err)
 		return posting.Posting{}, err
 	}
 	inputDB.UserName = user.Username
 
-	if err := pq.db.Create(&newPosting).Error; err != nil {
+	if err := pq.db.Create(&inputDB).Error; err != nil {
 		// Handle error saat menyimpan posting ke dalam database
 		return posting.Posting{}, err
 	}
+
+	newPosting.ID = inputDB.ID
+	newPosting.UserName = inputDB.UserName
 
 	return newPosting, nil
 }

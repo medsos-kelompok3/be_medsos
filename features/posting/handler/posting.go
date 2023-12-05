@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
-	gojwt "github.com/golang-jwt/jwt"
+	golangjwt "github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -71,7 +71,7 @@ func (pc *PostingController) Add() echo.HandlerFunc {
 		inputProcess.GambarPosting = link
 		inputProcess.Caption = input.Caption
 
-		result, err := pc.p.AddPosting(c.Get("posting").(*gojwt.Token), *inputProcess)
+		result, err := pc.p.AddPosting(c.Get("user").(*golangjwt.Token), *inputProcess)
 
 		if err != nil {
 			c.Logger().Error("ERROR Register, explain:", err.Error())
@@ -92,6 +92,7 @@ func (pc *PostingController) Add() echo.HandlerFunc {
 		response.ID = result.ID
 		response.Caption = result.Caption
 		response.GambarPosting = result.GambarPosting
+		response.UserName = result.UserName
 
 		return c.JSON(http.StatusCreated, map[string]any{
 			"message": "success create data",

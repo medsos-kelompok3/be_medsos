@@ -10,7 +10,13 @@ import (
 )
 
 type PostingService struct {
-	repo posting.Repository
+	r posting.Repository
+}
+
+func New(model posting.Repository) posting.Service {
+	return &PostingService{
+		r: model,
+	}
 }
 
 // AddPosting implements posting.Service.
@@ -19,7 +25,7 @@ func (ps *PostingService) AddPosting(token *golangjwt.Token, newPosting posting.
 	if err != nil {
 		return posting.Posting{}, err
 	}
-	result, err := ps.repo.InsertPosting(userId, newPosting)
+	result, err := ps.r.InsertPosting(userId, newPosting)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			return posting.Posting{}, errors.New("dobel input")
