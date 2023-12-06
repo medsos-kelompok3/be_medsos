@@ -3,6 +3,7 @@ module be_medsos
 go 1.21.0
 
 require (
+	github.com/cloudinary/cloudinary-go/v2 v2.6.2
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-jwt/v4 v4.2.0
@@ -14,8 +15,6 @@ require (
 )
 
 require (
-	github.com/cloudinary/cloudinary-go v1.7.0 // indirect
-	github.com/cloudinary/cloudinary-go/v2 v2.6.2 // indirect
 	github.com/creasty/defaults v1.5.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
