@@ -104,10 +104,18 @@ paths:
                       example: "Log in berhasil! Selamat datang joko!"
                     data:  
                       type: array
-                      example: 
-                        username: joko
-                        password: joko1212
-                        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDE2MDU5OTgzNTMsImlhdCI6MTcwMTYwNTk5ODM1MiwiaWQiOjF9.vFsLrkcLzwzGQwmGTDnD0bNeDxyrI-6ouUgMYDtsomA
+                      items:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                            example: joko
+                          password:
+                            type: string
+                            example: joko1212
+                          token:
+                            type: string
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDE2MDU5OTgzNTMsImlhdCI6MTcwMTYwNTk5ODM1MiwiaWQiOjF9.vFsLrkcLzwzGQwmGTDnD0bNeDxyrI-6ouUgMYDtsomA 
         '400':
           description: Gagal, Inputan salah
           content:
@@ -132,7 +140,7 @@ paths:
                 type: object
                 example:
                   message:  "Ada masalah di server"                  
-  /user/{id}:
+  /user/{user_id}:
     get:
       tags:
         - User
@@ -233,14 +241,27 @@ paths:
                     example: "Profil berhasil diubah."
                   data:
                     type: array
-                    example: 
-                     user_id: 1
-                     username: Joko
-                     email: joko@gmail.com
-                     adress: Surabaya
-                     bio: Hai saya adalah joko 
-                     avatar: image/joko.png
-                     password: joko1212        
+                    items:
+                     type: object
+                     properties: 
+                      user_id:
+                        type: integer
+                        example: 1
+                      username:
+                        type: string
+                        example: Joko
+                      email:
+                        type: string
+                        example: joko@gmail.com
+                      adress:
+                        type: string
+                        example: Surabaya
+                      bio:
+                        type: string
+                        example: Hai saya adalah joko 
+                      avatar:
+                        type: string
+                        example: image/joko.png       
         '404':
           description: User not found
           content:
@@ -298,7 +319,7 @@ paths:
           - sosmed_auth:
               - write:user
               - delete:user
-  /user/{id}/profile:
+  /user/{user_id}/profile:
     get:
       tags:
         - User
@@ -306,7 +327,7 @@ paths:
       description: This can only be done by the logged in user.
       operationId: getUserByName
       parameters:
-        - name: id
+        - name: user_id
           in: path
           description: 'The id that needs to be fetched. Use user1 for testing. '
           required: true
@@ -408,36 +429,52 @@ paths:
                     example: Postingan ditemukan!
                   data:
                     type: array
+                    items:
+                     type: object
+                     properties:
+                     $ref: '#/components/schemas/Posting'
+                     maxitems: 10
                     example: 
-                    - posting_id: 3
-                      caption: "We live, we love, we lie"
-                      gambar: "image/bluesmurf.jpg"
-                      total_comment: 3
-                      user:
-                        avatar:  "image/andi.png" 
-                        username: "Andi"
-                      created at: 2023-11-03 19:24:04.363
-                    - posting_id: 4
-                      caption: "Lorem ipsum dolor sit amet"
-                      gambar: "image/lorem.jpg"
-                      total_comment: 6
-                      user:
-                        avatar:  "image/jane.png" 
-                        username: "Jane" 
-                      created at: 2023-11-03 19:25:36.561
-                    - posting_id: 5
-                      caption: "semriwing"
-                      gambar: "image/semriwing.jpg"
-                      total_comment: 5
-                      user:
-                        avatar:  "image/andi.png" 
-                        username: "Andi" 
-                      created at: 2023-11-03 20:37:05.754
-        
+                    - {
+                        posting_id: 3,
+                        caption: "We live, we love, we lie",
+                        gambar: "image/bluesmurf.jpg",
+                        total_comment: 3,
+                        user:
+                          {avatar:  "image/andi.png" ,
+                          username: "Andi",
+                          },
+                          
+                        created at: 2023-11-03 19:24:04.363,
+                    }
+                    - {
+                        posting_id: 4,
+                        caption: "Lorem ipsum dolor sit amet",
+                        gambar: "image/lorem.jpg",
+                        total_comment: 6,
+                        user:
+                          {avatar:  "image/jane.png", 
+                          username: "Jane",
+                          },
+                           
+                        created at: 2023-11-03 19:25:36.561,}
+                    - {
+                        posting_id: 5,
+                        caption: "semriwing",
+                        gambar: "image/semriwing.jpg",
+                        total_comment: 5,
+                        user: {
+                          avatar:  "image/andi.png",
+                          username: "Andi",
+                          },
+                           
+                        created at: 2023-11-03 20:37:05.754,}
+                      
+                      
                      
         '400':
           description: Invalid id posting
-  /posting/{id}:
+  /posting/{posting_id}:
     get:
       tags:
         - Posting
@@ -467,7 +504,7 @@ paths:
                     type: string
                     example: Postingan berhasil dimuat!
                   data:
-                $ref: '#/components/schemas/Posting'          
+                    $ref: '#/components/schemas/Posting'          
         '404':
           description: Posting not found
     put:
@@ -514,19 +551,30 @@ paths:
                   example: Postingan berhasil diedit!
                  data:
                   type: array
-                  example: 
-                  - posting_id: 1
-                    caption:  We live we dream we win
-                    gambar: image/image-edit.jpg
-                    total_comment: 0
-                    user:
-                      username: Joko
-                      avatar: /image/joko.jpg
-                    comments: 
-                    created_at: 2023-10-30 09:36:33.596 
-                    
+                  items: 
+                    type: object
+                    properties:
+                     posting_id:
+                      type: integer
+                      example: 1
+                     caption:
+                      type: string
+                      example: We live we dream we win
+                     gambar:
+                      type: string
+                      example: image/joko.png
+                     total_comment:
+                      type: integer
+                      example: 0
+                     user:
+                        $ref: '#/components/schemas/Response_User'
+                     created_at: 
+                      type: string
+                      example: 2023-10-30 09:36:33.596 
+                     comments:
+                      type: array
+                      example: 
 
-                   
 
         '404':
           description: Posting not found
@@ -610,7 +658,7 @@ paths:
           - sosmed_auth:
               - write:comment
               - read:comment
-  /comment/{id}:
+  /comment/{comment_id}:
     get:
       tags:
       - Comment
@@ -686,13 +734,22 @@ paths:
                   example: Comment berhasil diubah
                  data:
                   type: array
-                  example:
-                  - comment_id: 1
-                    isi_comment: Postingan nya buuuagus !!!
-                    user:
-                     username: Joko
-                     avatar: image/joko.png
-                    created_at: 2023-11-03 19:24:36.887
+                  items:
+                    type: object
+                    properties:
+                      
+                      comment_id:
+                        type: integer
+                        example: 1 
+                      user:
+                            $ref: '#/components/schemas/Response_User'
+                      isi_comment:
+                        type: string
+                        example: Postingan nya buuuagus !!!
+                      created_at:
+                        type: string
+                        example: 2023-11-03 19:24:36.887
+                  
 
         '404':
             description: comment not found
