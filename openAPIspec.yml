@@ -119,7 +119,7 @@ paths:
                     password:
                       type: string
                       example: joko1212
-      responses:
+      responses: ##iniyang benar, ada mesage dan data
         '201':
           description: Berhasil Login
           content:
@@ -155,10 +155,10 @@ paths:
                    type: string
                    example:  "Masukkan username dan password yang valid!"
                   data:  
-                      type: array
-                      items: 
-                       type: object
-                       example:
+                   type: array
+                   items: 
+                    type: object
+                    example:    
         '401':
           description: Gagal, Input tidak cocok
           content:
@@ -250,36 +250,44 @@ paths:
                   data:
                     $ref: '#/components/schemas/User' 
         '400':
-          description: Bad Request
+          description: Bad request
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message: "Masukkan ID user!"
-                  data: 
+                properties:
+                  message:
+                   type: string
+                   example:  "User_id harap diisi"
+                  data:  
+                    type: object
+                    example:
         '401':
-          description: Unauthorized
+          description: Akses ditolak
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message: "Harap log in terlebih dahulu!"
-                  data: 
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example:
         '404':
           description: Gagal, data tidak ada
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message:  "User tidak ditemukan"
+                properties:
+                  message:
+                   type: string
+                   example:  User tidak ditemukan
                   data:  
-                   type: array
-                   items: 
                     type: object
-                    example:   
+                    example:
         '500':
           description: Gagal, masalah server
           content:
@@ -291,10 +299,8 @@ paths:
                    type: string
                    example: "Ada masalah di server" 
                   data:  
-                   type: array
-                   items: 
                     type: object
-                    example:                      
+                    example:                   
         '503':
           description: Gagal, masalah server
           content:
@@ -306,10 +312,8 @@ paths:
                    type: string
                    example: Server sementara tidak dapat dihubungi     
                   data:  
-                   type: array
-                   items: 
                     type: object
-                    example:     
+                    example:   
     put:
       tags:
         - User
@@ -390,43 +394,52 @@ paths:
                       avatar:
                         type: string
                         example: image/joko.png       
-        '404':
-          description: Gagal, data tidak ada
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: "User tidak ditemukan"
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:   
+
         '400':
           description: Gagal, Inputan salah
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message:  "Masukkan username dan password yang valid!"
+                properties:
+                  message:
+                   type: string
+                   example: "Masukkan input yang benar"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:          
         '401':
-          description: Gagal, input tidak cocok
+          description: Unauthorized
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message:  "Masukkan username dan password yang benar"        
-        '405':
-          description: Gagal, input tidak cocok
+                properties:
+                  message:
+                   type: string
+                   example:  Harap login terlebih dahulu
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                   
+        '404':
+          description: Gagal, data tidak ada
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message:  "Masukkan input sesuai tipenya"                                 
+                properties:
+                  message:
+                   type: string
+                   example:  User tidak ditemukan
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                                  
         '500':
           description: Gagal, masalah server
           content:
@@ -487,20 +500,39 @@ paths:
                     description: The message to be displayed.
                     example: "User successfully deleted."
                   
-              
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Masukkan user_id!"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Harap login!"
         '404':
           description: Gagal, data tidak ada
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  message:  "User tidak ditemukan"
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:   
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "User tidak ditemukan!" 
         '500':
           description: Gagal, masalah server
           content:
@@ -511,11 +543,7 @@ paths:
                   message:
                    type: string
                    example: "Ada masalah di server" 
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:                      
+                   
         '503':
           description: Gagal, masalah server
           content:
@@ -526,11 +554,7 @@ paths:
                   message:
                    type: string
                    example: Server sementara tidak dapat dihubungi     
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:                           
+                       
       security:
           - sosmed_auth:
               - write:user
@@ -567,17 +591,32 @@ paths:
                     example: "User successfully retrieved."
                   data:
                     $ref: '#/components/schemas/Response_Get' 
-        '404':
-          description: User not found
+        '401':
+          description: Akses ditolak
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
-                    type: string
-                    description: The message to be displayed.
-                    example: "User tidak ditemukan."
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example:
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "User tidak ditemukan!"
+                  data:  
+                    type: object
+                    example:
         '500':
           description: Gagal, masalah server
           content:
@@ -589,10 +628,8 @@ paths:
                    type: string
                    example: "Ada masalah di server" 
                   data:  
-                   type: array
-                   items: 
                     type: object
-                    example:                      
+                    example:                     
         '503':
           description: Gagal, masalah server
           content:
@@ -604,10 +641,8 @@ paths:
                    type: string
                    example: Server sementara tidak dapat dihubungi     
                   data:  
-                   type: array
-                   items: 
                     type: object
-                    example:     
+                    example:
       
   /posting:
     post:
@@ -650,7 +685,31 @@ paths:
                
                   
         '400':
-          description: Invalid username supplied
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan postingan dan gambar yang sesuai, file tidak bisa dimuat"
+                  data:  
+                    type: object
+                    example:
+        '401':
+          description: Gagal, akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example: 
         '500':
           description: Gagal, masalah server
           content:
@@ -662,8 +721,6 @@ paths:
                    type: string
                    example: "Ada masalah di server" 
                   data:  
-                   type: array
-                   items: 
                     type: object
                     example:                      
         '503':
@@ -677,10 +734,8 @@ paths:
                    type: string
                    example: Server sementara tidak dapat dihubungi     
                   data:  
-                   type: array
-                   items: 
                     type: object
-                    example:              
+                    example:            
       security:
           - sosmed_auth:
               - write:posting
@@ -745,19 +800,36 @@ paths:
                            
                         created at: 2023-11-03 20:37:05.754,}
           
-        '400':
-          description: Invalid id posting
-        '404':
-          description: Posts not found
+        '401':
+          description: Akses ditolak
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
-                    type: string
-                    description: The message to be displayed.
-                    example: "Tidak ada post."         
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:  
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Postingan tidak ditemukan!"
+                  data:  
+                      type: array
+                      items: 
+                       type: object
+                       example:  
         '500':
           description: Gagal, masalah server
           content:
@@ -819,17 +891,45 @@ paths:
                     example: Postingan berhasil dimuat!
                   data:
                     $ref: '#/components/schemas/Posting'          
-        '404':
-          description: Post not found
+        '400':
+          description: Bad request
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
-                    type: string
-                    description: The message to be displayed.
-                    example: "Tidak ada post dengan posting_id yang diberikan." 
+                   type: string
+                   example:  "Posting_id harap diisi"
+                  data:  
+                    type: object
+                    example:
+        '401':
+          description: Akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example:
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan username dan password yang valid!"
+                  data:  
+                    type: object
+                    example:
         '500':
           description: Gagal, masalah server
           content:
@@ -927,19 +1027,51 @@ paths:
                      comments:
                       type: array
                       example: 
-
-
-        '404':
-          description: Post not found
+        '400':
+          description: Gagal, Inputan salah
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
-                    type: string
-                    description: The message to be displayed.
-                    example: "Tidak ada post dengan posting_id yang diberikan." 
+                   type: string
+                   example:  "Masukkan input yang valid!"
+                  data:  
+                    type: array
+                    items: 
+                      type: object
+                      example:
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu!"
+                  data:  
+                    type: array
+                    items: 
+                     type: object
+                     example:                 
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Postingan tidak ditemukan!"
+                  data:  
+                    type: array
+                    items: 
+                     type: object
+                     example:          
         '500':
           description: Gagal, masalah server
           content:
@@ -999,6 +1131,29 @@ paths:
                     type: string
                     description: The message to be displayed.
                     example: " Postingan dihapus!"
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Masukkan posting_id!"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Harap login!"
         '404':
           description: Post not found
           content:
@@ -1009,7 +1164,7 @@ paths:
                   message:
                     type: string
                     description: The message to be displayed.
-                    example: "Tidak ada post dengan posting_id yang diberikan." 
+                    example: "Tidak ada post dengan posting_id yang diberikan."  
         '500':
           description: Gagal, masalah server
           content:
@@ -1020,11 +1175,7 @@ paths:
                   message:
                    type: string
                    example: "Ada masalah di server" 
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:                      
+                     
         '503':
           description: Gagal, masalah server
           content:
@@ -1035,11 +1186,7 @@ paths:
                   message:
                    type: string
                    example: Server sementara tidak dapat dihubungi     
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:                           
+                         
       security:
           - sosmed_auth:
               - delete:posting
@@ -1068,14 +1215,44 @@ paths:
                   type: string
                   example: Postingan nya bagus !!!
       responses:
-        '200':
+        '201':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment' 
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Comment berhasil dibuat!
+                  data:
+                   $ref: '#/components/schemas/Comment' 
         '400':
-          description: Invalid username supplied
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan komentar"
+                  data: 
+                   type: object
+                   example:
+        '401':
+          description: Gagal, akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data: 
+                   type: object
+                   example:
         '500':
           description: Gagal, masalah server
           content:
@@ -1086,11 +1263,9 @@ paths:
                   message:
                    type: string
                    example: "Ada masalah di server" 
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:                      
+                  data: 
+                   type: object
+                   example:                     
         '503':
           description: Gagal, masalah server
           content:
@@ -1101,11 +1276,9 @@ paths:
                   message:
                    type: string
                    example: Server sementara tidak dapat dihubungi     
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:               
+                  data: 
+                   type: object
+                   example:            
       security:
           - sosmed_auth:
               - write:comment
@@ -1139,17 +1312,45 @@ paths:
                  data:
                   $ref: '#/components/schemas/Comment'
 
-        '404':
-          description: Comment not found
+        '400':
+          description: Bad request
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
-                    type: string
-                    description: The message to be displayed.
-                    example: "Tidak ada comment dengan comment_id yang diberikan." 
+                   type: string
+                   example:  "Comment_id harap diisi"
+                  data:  
+                    type: object
+                    example:
+        '401':
+          description: Akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example:
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Comment tidak ditemukan"
+                  data:  
+                    type: object
+                    example: 
         '500':
           description: Gagal, masalah server
           content:
@@ -1161,10 +1362,8 @@ paths:
                    type: string
                    example: "Ada masalah di server" 
                   data:  
-                   type: array
-                   items: 
                     type: object
-                    example:                      
+                    example:                     
         '503':
           description: Gagal, masalah server
           content:
@@ -1176,10 +1375,8 @@ paths:
                    type: string
                    example: Server sementara tidak dapat dihubungi     
                   data:  
-                   type: array
-                   items: 
                     type: object
-                    example:                
+                    example:               
       security:
           - sosmed_auth:
               - read:comment
@@ -1240,19 +1437,51 @@ paths:
                       created_at:
                         type: string
                         example: 2023-11-03 19:24:36.887
-                  
-
-        '404':
-          description: Comment not found
+        '400':
+          description: Gagal, Inputan salah
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
-                    type: string
-                    description: The message to be displayed.
-                    example: "Tidak ada comment dengan comment_id yang diberikan." 
+                   type: string
+                   example:  "Masukkan input yang valid!"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:   
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu!"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                   
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Comment tidak ditemukan!"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:   
         '500':
           description: Gagal, masalah server
           content:
@@ -1313,6 +1542,28 @@ paths:
                       type: string
                       description: The message to be displayed.
                       example: "Comment berhasil dihapus."
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Masukkan comment_id!"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Harap login!"
         '404':
           description: Comment not found
           content:
@@ -1334,11 +1585,7 @@ paths:
                   message:
                    type: string
                    example: "Ada masalah di server" 
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:                      
+                  
         '503':
           description: Gagal, masalah server
           content:
@@ -1349,11 +1596,7 @@ paths:
                   message:
                    type: string
                    example: Server sementara tidak dapat dihubungi     
-                  data:  
-                   type: array
-                   items: 
-                    type: object
-                    example:     
+
       security:
           - sosmed_auth:
               - delete:comment
