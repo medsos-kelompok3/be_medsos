@@ -108,7 +108,7 @@ func (pc *PostingController) Update() echo.HandlerFunc {
 		postingID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{
-				"message": "ID buku tidak valid",
+				"message": "ID posting tidak valid",
 			})
 		}
 

@@ -37,5 +37,5 @@ func RoutePosting(e *echo.Echo, pc posting.Handler) {
 }
 
 func RouteComment(e *echo.Echo, cc comment.Handler) {
-	e.POST("/comment", cc.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.POST("/posting/:posting_id/comment", cc.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
