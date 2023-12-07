@@ -13,7 +13,6 @@ type PostingModel struct {
 	Caption       string
 	GambarPosting string
 	UserName      string
-	UserID        uint
 }
 
 type PostingQuery struct {
