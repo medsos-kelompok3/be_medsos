@@ -1,6 +1,7 @@
 package service
 
 import (
+	posting "be_medsos/features/posting"
 	"be_medsos/features/user"
 	"be_medsos/helper/enkrip"
 	"be_medsos/helper/jwt"
@@ -135,5 +136,45 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 		return user.User{}, errors.New("kesalahan pada database")
 	}
 	return respons, nil
+
+}
+
+func (us *UserService) GetUserDetails(token *golangjwt.Token, id uint) (user.User, error) {
+	userID, err := jwt.ExtractToken(token)
+	if err != nil {
+		return user.User{}, errors.New("harap login")
+	}
+	if userID != id {
+
+		return user.User{}, errors.New("id tidak cocok")
+	}
+	result, err := us.repo.GetUserByID(id)
+	if err != nil {
+		if strings.Contains(err.Error(), "ditemukan") {
+
+			return user.User{}, err
+		}
+		errors.New("server error")
+		return user.User{}, err
+	}
+	return *result, nil
+
+}
+func (us *UserService) GetUserProfiles(token *golangjwt.Token, id uint) (user.User, []posting.Posting, error) {
+	userID, err := jwt.ExtractToken(token)
+	if err != nil {
+		return user.User{}, nil, errors.New("harap login")
+	}
+	if userID != id {
+
+		return user.User{}, nil, errors.New("id tidak cocok")
+	}
+	result, posts, err := us.repo.GetProfil(userID)
+
+	if err != nil {
+		return user.User{}, nil, errors.New("harap login")
+	}
+
+	return result, posts, nil
 
 }

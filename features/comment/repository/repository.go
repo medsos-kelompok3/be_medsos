@@ -14,6 +14,8 @@ type CommentModel struct {
 	PostingID  uint
 	IsiComment string
 	UserName   string
+	UserID     uint
+	Avatar     string
 }
 
 type CommentQuery struct {

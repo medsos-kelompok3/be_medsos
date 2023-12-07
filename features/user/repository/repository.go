@@ -3,6 +3,7 @@ package repository
 import (
 	"be_medsos/features/user"
 	"errors"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -15,6 +16,43 @@ type UserModel struct {
 	Bio      string
 	Avatar   string
 	Password string
+}
+
+type PostingModel struct {
+	gorm.Model
+	Caption       string
+	GambarPosting string
+	UserName      string
+	User_id       uint
+	Avatar        string
+}
+
+type Posting struct {
+	ID            uint
+	Caption       string
+	GambarPosting string
+	UserName      string
+	Avatar        string
+	JumlahKomen   int
+}
+
+type CommentModel struct {
+	gorm.Model
+	PostingID  uint
+	IsiComment string
+	UserName   string
+	UserID     uint
+	Avatar     string
+}
+
+type Comment struct {
+	ID         uint
+	PostingID  uint
+	UserID     uint
+	UserName   string
+	Avatar     string
+	IsiComment string
+	CreatedAt  string
 }
 
 type UserQuery struct {
@@ -98,7 +136,8 @@ func (uq *UserQuery) GetUserByID(userID uint) (*user.User, error) {
 
 	// Jika tidak ada buku ditemukan
 	if userModel.ID == 0 {
-		return nil, nil
+		err := errors.New("user tidak ditemukan")
+		return nil, err
 	}
 
 	result := &user.User{
@@ -160,4 +199,48 @@ func (uq *UserQuery) UpdateUser(input user.User) (user.User, error) {
 	}
 
 	return result, nil
+}
+
+// ngambil info user dan profil
+func (uq *UserQuery) GetProfil(id uint) (user.User, []Posting, error) {
+	//ngambil user
+	var userproses = new(user.User)
+	userproses, err := uq.GetUserByID(id)
+	if err != nil {
+		return user.User{}, nil, err
+	}
+	// ngambil postingan
+	var postingproses = new([]PostingModel)
+	if err := uq.db.Find(&postingproses).Where("user_id = ?", id); err.Error != nil {
+		if strings.Contains(err.Error.Error(), "not found") {
+			errors.New("User tidak memiliki postingan, 404")
+
+			return *userproses, nil, err.Error
+		}
+	}
+	//ngambil jumlah komen
+	var jumlahkomen []int
+	for _, post := range *postingproses {
+		var comments CommentModel
+		var count int64
+		uq.db.Model(&comments).Where("postingid = ?", post.ID).Count(&count)
+		jumlahkomen = append(jumlahkomen, int(count))
+	}
+
+	// iterasi ke posting
+	var postResponse = new([]Posting)
+	for n, post := range *postingproses {
+		isiposting := Posting{
+			ID:            post.ID,
+			Caption:       post.Caption,
+			GambarPosting: post.GambarPosting,
+			UserName:      post.UserName,
+			Avatar:        post.Avatar,
+			JumlahKomen:   jumlahkomen[n],
+		}
+		*postResponse = append(*postResponse, isiposting)
+	}
+
+	return *userproses, *postResponse, nil
+
 }

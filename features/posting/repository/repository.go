@@ -13,6 +13,17 @@ type PostingModel struct {
 	Caption       string
 	GambarPosting string
 	UserName      string
+	User_id       uint
+	Avatar        uint
+}
+
+type CommentModel struct {
+	gorm.Model
+	PostingID  uint
+	IsiComment string
+	UserName   string
+	UserID     uint
+	Avatar     string
 }
 
 type PostingQuery struct {

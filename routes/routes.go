@@ -25,8 +25,8 @@ func RouteUser(e *echo.Echo, uc user.Handler) {
 	e.POST("/register", uc.Register())
 	e.POST("/login", uc.Login())
 	e.GET("/user/:username", uc.GetAllUserByUsername())
-	e.DELETE("/user/:id", uc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	e.PUT("/user/:id", uc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.DELETE("/user/:user_id", uc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.PUT("/user/:user_id", uc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
 
 func RoutePosting(e *echo.Echo, pc posting.Handler) {

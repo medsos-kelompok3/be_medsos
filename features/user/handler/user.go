@@ -162,7 +162,7 @@ func (uc *UserController) GetAllUserByUsername() echo.HandlerFunc {
 // Delete implements user.Handler.
 func (uc *UserController) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		userID, err := strconv.ParseUint(c.Param("user_id"), 10, 64)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{
 				"message": "ID user tidak valid",
@@ -198,9 +198,23 @@ func (uc *UserController) Delete() echo.HandlerFunc {
 func (uc *UserController) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input = new(PutRequest)
+		userID, err := strconv.ParseUint(c.Param("user_id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+				"data":    nil,
+			})
+		}
+		if &userID == nil {
+			return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+				"message": "Harap Login dulu",
+				"data":    nil,
+			})
+		}
 		if err := c.Bind(input); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "input yang diberikan tidak sesuai",
+				"data":    nil,
 			})
 		}
 
@@ -260,6 +274,7 @@ func (uc *UserController) Update() echo.HandlerFunc {
 			return c.JSON(
 				http.StatusBadRequest, map[string]any{
 					"message": "formheader error",
+					"data":    nil,
 				})
 
 		}
@@ -269,6 +284,7 @@ func (uc *UserController) Update() echo.HandlerFunc {
 			return c.JSON(
 				http.StatusBadRequest, map[string]any{
 					"message": "formfile error",
+					"data":    nil,
 				})
 		}
 		defer formFile.Close()
@@ -315,6 +331,10 @@ func (uc *UserController) Update() echo.HandlerFunc {
 				statusCode = http.StatusBadRequest
 				message = "data yang diinputkan sudah terdaftar ada sistem"
 			}
+			if strings.Contains(err.Error(), "yang lama") {
+				statusCode = http.StatusBadRequest
+				message = "harap masukkan password yang lama jika ingin mengganti password"
+			}
 
 			return c.JSON(statusCode, map[string]any{
 				"message": message,
@@ -333,5 +353,58 @@ func (uc *UserController) Update() echo.HandlerFunc {
 			"message": "success create data",
 			"data":    response,
 		})
+	}
+}
+
+// get user details
+func (uc *UserController) GetUserDetails() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, err := strconv.ParseUint(c.Param("user_id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+				"data":    nil,
+			})
+		}
+		if &userID == nil {
+			return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+				"message": "Harap Login dulu",
+				"data":    nil,
+			})
+		}
+
+		// ngambil dari repo
+		proses, err := uc.srv.GetUserDetails(c.Get("user").(*gojwt.Token), uint(userID))
+		if err != nil {
+			if strings.Contains(err.Error(), "ditemukann") {
+				return c.JSON(http.StatusNotFound, map[string]interface{}{
+					"message": "User tidak ditemukan",
+					"data":    nil,
+				})
+			}
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Server error",
+				"data":    nil,
+			})
+		}
+		response := GetResponse{
+			ID:       proses.ID,
+			Username: proses.Username,
+			Email:    proses.Email,
+			Address:  proses.Address,
+			Bio:      proses.Bio,
+			Avatar:   proses.Avatar,
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "Server error",
+			"data":    response,
+		})
+	}
+}
+
+// get user profiles
+func (uc *UserController) GetUserProfiles() echo.HandlerFunc {
+	return func(c echo.Context) error {
+
 	}
 }
