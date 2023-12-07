@@ -54,40 +54,30 @@ func TestSemuaPosting(t *testing.T) {
 		page := 1
 		limit := 5
 
-		// Set up expectations for mock dependencies
 		repo.On("GetTanpaPosting", page, limit).Return([]posting.Posting{
 			{ID: 1, Caption: "Test Caption 1", GambarPosting: "www.fawa.com"},
 			{ID: 2, Caption: "Test Caption 2", GambarPosting: "www.fawa.com"},
-			// Add other postings as needed
 		}, nil).Once()
 
-		// Invoke the service method
 		result, err := m.SemuaPosting(page, limit)
 
-		// Assertions
 		assert.Nil(t, err)
-		assert.Len(t, result, 2) // Adjust the expected length based on the mocked data
+		assert.Len(t, result, 2)
 
-		// Verify that the expectations were met
 		repo.AssertExpectations(t)
 	})
 
 	t.Run("Failure Case - Repository Error", func(t *testing.T) {
-		// Set up input data
 		page := 1
 		limit := 5
 
-		// Set up expectations for mock dependencies
 		repo.On("GetTanpaPosting", page, limit).Return(nil, errors.New("repository error")).Once()
 
-		// Invoke the service method
 		result, err := m.SemuaPosting(page, limit)
 
-		// Assertions
 		assert.Error(t, err)
 		assert.Nil(t, result)
 
-		// Verify that the expectations were met
 		repo.AssertExpectations(t)
 	})
 }
@@ -124,40 +114,29 @@ func TestHapusPosting(t *testing.T) {
 	repo := mocks.NewRepository(t)
 	m := service.New(repo)
 
-	// Set up input data
 	postingID := uint(1)
 	testToken := &gojwt.Token{
 		Claims: gojwt.MapClaims{
-			"id": float64(1), // Replace with the appropriate claim key and value
+			"id": float64(1),
 		},
-		// Set other fields as needed, e.g., Header, Method, etc.
 	}
 
 	t.Run("Success Case", func(t *testing.T) {
-		// Set up expectations for mock dependencies
 		repo.On("DeletePosting", postingID).Return(nil).Once()
 
-		// Invoke the service method
 		err := m.HapusPosting(testToken, postingID)
-
-		// Assertions
 		assert.Nil(t, err)
 
-		// Verify that the expectations were met
 		repo.AssertExpectations(t)
 	})
 
 	t.Run("Failure Case - Repository Error", func(t *testing.T) {
-		// Set up expectations for mock dependencies
 		repo.On("DeletePosting", postingID).Return(errors.New("repository error")).Once()
 
-		// Invoke the service method
 		err := m.HapusPosting(testToken, postingID)
 
-		// Assertions
 		assert.Error(t, err)
 
-		// Verify that the expectations were met
 		repo.AssertExpectations(t)
 	})
 }
