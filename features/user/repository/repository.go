@@ -156,6 +156,7 @@ func (uq *UserQuery) UpdateUser(input user.User) (user.User, error) {
 		Address:  proses.Address,
 		Avatar:   proses.Avatar,
 		Password: proses.Password,
+		Bio:      proses.Bio,
 	}
 
 	return result, nil

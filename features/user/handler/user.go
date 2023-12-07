@@ -228,6 +228,10 @@ func (uc *UserController) Update() echo.HandlerFunc {
 						statusCode = http.StatusBadRequest
 						message = "data yang diinputkan sudah terdaftar ada sistem"
 					}
+					if strings.Contains(err.Error(), "yang lama") {
+						statusCode = http.StatusBadRequest
+						message = "harap masukkan password yang lama jika ingin mengganti password"
+					}
 
 					return c.JSON(statusCode, map[string]any{
 						"message": message,

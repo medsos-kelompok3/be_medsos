@@ -119,6 +119,9 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 		}
 	}
 	if input.NewPassword != "" {
+		if input.Password == "" {
+			return user.User{}, errors.New("masukkan password yang lama ")
+		}
 		newpass, err := us.h.HashPassword(input.NewPassword)
 		if err != nil {
 			return user.User{}, errors.New("masukkan password baru dengan benar")
