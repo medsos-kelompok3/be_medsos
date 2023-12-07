@@ -10,7 +10,9 @@ type Comment struct {
 	PostingID  uint
 	UserID     uint
 	UserName   string
+	Avatar     string
 	IsiComment string
+	CreatedAt  string
 }
 
 type Handler interface {

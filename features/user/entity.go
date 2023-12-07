@@ -1,6 +1,8 @@
 package user
 
 import (
+	posting "be_medsos/features/posting"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
@@ -22,6 +24,8 @@ type Handler interface {
 	GetAllUserByUsername() echo.HandlerFunc
 	Delete() echo.HandlerFunc
 	Update() echo.HandlerFunc
+	GetUserDetails() echo.HandlerFunc
+	GetUserProfiles() echo.HandlerFunc
 }
 
 type Service interface {
@@ -30,6 +34,8 @@ type Service interface {
 	DapatUser(username string) (User, error)
 	HapusUser(token *jwt.Token, userID uint) error
 	UpdateUser(token *jwt.Token, input User) (User, error)
+	GetUserDetails(token *jwt.Token, userID uint) (User, error)
+	GetUserProfiles(token *jwt.Token, userID uint) (User, []posting.Posting, error)
 }
 
 type Repository interface {
@@ -39,4 +45,5 @@ type Repository interface {
 	GetUserByID(userID uint) (*User, error)
 	DeleteUser(userID uint) error
 	UpdateUser(input User) (User, error)
+	GetProfil(id uint) (User, []posting.Posting, error)
 }
