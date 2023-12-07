@@ -22,23 +22,25 @@ func New(r user.Repository, h enkrip.HashInterface) user.Service {
 	}
 }
 
-func (us *UserService) AddUser(input user.User) (user.User, error) {
+func (us *UserService) AddUser(input user.User) error {
 	if input.Username == "" || input.Password == "" {
-		return user.User{}, errors.New("username and password are required")
+		return errors.New("username and password are required")
 	}
 	ePassword, err := us.h.HashPassword(input.Password)
 
 	if err != nil {
-		return user.User{}, errors.New("terdapat masalah saat memproses data")
+		return errors.New("terjadi error saat enkripsi")
 	}
 	input.Password = ePassword
 
-	result, err := us.repo.AddUser(input)
-	if err != nil {
-
-		return user.User{}, errors.New("terjadi kesalahan pada sistem")
+	result := us.repo.AddUser(input)
+	if result != nil {
+		if strings.Contains(err.Error(), "didaftarkan") {
+			return result
+		}
+		return errors.New("terjadi kesalahan pada sistem")
 	}
-	return result, nil
+	return result
 }
 
 // Login implements user.Service.
@@ -104,6 +106,26 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 
 		return user.User{}, errors.New("id tidak cocok")
 	}
+	// ambil data user yg lama
+	base, err := us.repo.GetUserByID(userID)
+	if err != nil {
+		return user.User{}, errors.New("user tidak ditemukan")
+	}
+	if input.Password != "" {
+		err = us.h.Compare(base.Password, input.Password)
+
+		if err != nil {
+			return user.User{}, errors.New("password salah")
+		}
+	}
+	if input.NewPassword != "" {
+		newpass, err := us.h.HashPassword(input.NewPassword)
+		if err != nil {
+			return user.User{}, errors.New("masukkan password baru dengan benar")
+		}
+		input.NewPassword = newpass
+	}
+
 	respons, err := us.repo.UpdateUser(input)
 	if err != nil {
 
