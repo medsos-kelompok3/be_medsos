@@ -13,10 +13,39 @@ type PostingService struct {
 	r posting.Repository
 }
 
+// UpdatePosting implements posting.Service.
+func (ps *PostingService) UpdatePosting(token *golangjwt.Token, input posting.Posting) (posting.Posting, error) {
+	respons, err := ps.r.UpdatePosting(input)
+	if err != nil {
+
+		return posting.Posting{}, errors.New("kesalahan pada database")
+	}
+	return respons, nil
+}
+
 func New(model posting.Repository) posting.Service {
 	return &PostingService{
 		r: model,
 	}
+}
+
+// HapusPosting implements posting.Service.
+func (ps *PostingService) HapusPosting(token *golangjwt.Token, postingID uint) error {
+	err := ps.r.DeletePosting(postingID)
+	if err != nil {
+		return errors.New("failed to delete the posting")
+	}
+
+	return nil
+}
+
+// SemuaPosting implements posting.Service.
+func (ps *PostingService) SemuaPosting(page int, limit int) ([]posting.Posting, error) {
+	result, err := ps.r.GetTanpaPosting(page, limit)
+	if err != nil {
+		return nil, errors.New("failed to retrieve inserted coupon")
+	}
+	return result, nil
 }
 
 // AddPosting implements posting.Service.

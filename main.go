@@ -2,6 +2,9 @@ package main
 
 import (
 	"be_medsos/config"
+	ch "be_medsos/features/comment/handler"
+	cr "be_medsos/features/comment/repository"
+	cs "be_medsos/features/comment/service"
 	ph "be_medsos/features/posting/handler"
 	pr "be_medsos/features/posting/repository"
 	ps "be_medsos/features/posting/service"
@@ -29,7 +32,7 @@ func main() {
 		e.Logger.Fatal("tidak bisa start bro", err.Error())
 	}
 
-	db.AutoMigrate(&ur.UserModel{}, &pr.PostingModel{})
+	db.AutoMigrate(&ur.UserModel{}, &pr.PostingModel{}, &cr.CommentModel{})
 
 	ekrip := ek.New()
 	userRepo := ur.New(db)
@@ -40,7 +43,11 @@ func main() {
 	postingService := ps.New(postingRepo)
 	postingHandler := ph.New(postingService, cld, ctx, param)
 
-	routes.InitRoute(e, userHandler, postingHandler)
+	commentRepo := cr.New(db)
+	commentService := cs.New(commentRepo)
+	commentHandler := ch.New(commentService)
+
+	routes.InitRoute(e, userHandler, postingHandler, commentHandler)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }
