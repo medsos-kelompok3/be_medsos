@@ -56,3 +56,26 @@ func (cq *CommentQuery) InsertComment(userID uint, postingID uint, newComment co
 
 	return newComment, nil
 }
+
+// UpdateComment implements comment.Repository.
+func (cq *CommentQuery) UpdateComment(input comment.Comment) (comment.Comment, error) {
+	var proses CommentModel
+	if err := cq.db.First(&proses, input.ID).Error; err != nil {
+		return comment.Comment{}, err
+	}
+
+	proses.IsiComment = input.IsiComment
+
+	if err := cq.db.Save(&proses).Error; err != nil {
+
+		return comment.Comment{}, err
+	}
+	result := comment.Comment{
+		ID:         proses.ID,
+		IsiComment: proses.IsiComment,
+		PostingID:  proses.PostingID,
+		UserName:   proses.UserName,
+	}
+
+	return result, nil
+}

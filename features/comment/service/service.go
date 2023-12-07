@@ -34,3 +34,13 @@ func (cs *CommentService) AddComment(token *golangjwt.Token, newComment comment.
 	}
 	return result, nil
 }
+
+// UpdateComment implements comment.Service.
+func (cs *CommentService) UpdateComment(token *golangjwt.Token, input comment.Comment) (comment.Comment, error) {
+	respons, err := cs.c.UpdateComment(input)
+	if err != nil {
+
+		return comment.Comment{}, errors.New("kesalahan pada database")
+	}
+	return respons, nil
+}
