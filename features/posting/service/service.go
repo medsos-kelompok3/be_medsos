@@ -15,14 +15,6 @@ type PostingService struct {
 
 // UpdatePosting implements posting.Service.
 func (ps *PostingService) UpdatePosting(token *golangjwt.Token, input posting.Posting) (posting.Posting, error) {
-	userID, err := jwt.ExtractToken(token)
-	if err != nil {
-		return posting.Posting{}, errors.New("harap login")
-	}
-	if userID != input.ID {
-
-		return posting.Posting{}, errors.New("id tidak cocok")
-	}
 	respons, err := ps.r.UpdatePosting(input)
 	if err != nil {
 

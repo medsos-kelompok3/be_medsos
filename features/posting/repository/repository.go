@@ -13,6 +13,7 @@ type PostingModel struct {
 	Caption       string
 	GambarPosting string
 	UserName      string
+	UserID        uint
 }
 
 type PostingQuery struct {
@@ -26,20 +27,8 @@ func (pq *PostingQuery) UpdatePosting(input posting.Posting) (posting.Posting, e
 		return posting.Posting{}, err
 	}
 
-	// Jika tidak ada buku ditemukan
-	if proses.ID == 0 {
-		return posting.Posting{}, nil
-	}
-
-	if input.Caption != "" {
-		proses.Caption = input.Caption
-	}
-	if input.GambarPosting != "" {
-		proses.GambarPosting = input.GambarPosting
-	}
-	if input.UserName != "" {
-		proses.UserName = input.UserName
-	}
+	proses.Caption = input.Caption
+	proses.GambarPosting = input.GambarPosting
 
 	if err := pq.db.Save(&proses).Error; err != nil {
 

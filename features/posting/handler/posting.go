@@ -20,16 +20,25 @@ type PostingController struct {
 	folder string
 }
 
+func New(p posting.Service, cld *cloudinary.Cloudinary, ctx context.Context, uploadparam string) posting.Handler {
+	return &PostingController{
+		p:      p,
+		cl:     cld,
+		ct:     ctx,
+		folder: uploadparam,
+	}
+}
+
 // Update implements posting.Handler.
 func (pc *PostingController) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var input = new(PostingRequest)
+		var input = new(PutPostingRequest)
 		if err := c.Bind(input); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "input yang diberikan tidak sesuai",
 			})
 		}
-		formHeader, err := c.FormFile("avatar")
+		formHeader, err := c.FormFile("gambar_posting")
 		if err != nil {
 			return c.JSON(
 				http.StatusInternalServerError, map[string]any{
@@ -61,10 +70,20 @@ func (pc *PostingController) Update() echo.HandlerFunc {
 			}
 		}
 
-		var inputProcess = new(posting.Posting)
-		inputProcess.GambarPosting = link
+		postingID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID buku tidak valid",
+			})
+		}
 
-		result, err := pc.p.UpdatePosting(c.Get("user").(*golangjwt.Token), *inputProcess)
+		var inputProcess = posting.Posting{
+			ID:            uint(postingID),
+			Caption:       input.Caption,
+			GambarPosting: link,
+		}
+
+		result, err := pc.p.UpdatePosting(c.Get("user").(*golangjwt.Token), inputProcess)
 
 		if err != nil {
 			c.Logger().Error("ERROR Register, explain:", err.Error())
@@ -81,7 +100,7 @@ func (pc *PostingController) Update() echo.HandlerFunc {
 			})
 		}
 
-		var response = new(PostingResponse)
+		var response = new(PutResponse)
 		response.ID = result.ID
 		response.Caption = result.Caption
 		response.GambarPosting = result.GambarPosting
@@ -92,15 +111,6 @@ func (pc *PostingController) Update() echo.HandlerFunc {
 			"data":    response,
 		})
 
-	}
-}
-
-func New(p posting.Service, cld *cloudinary.Cloudinary, ctx context.Context, uploadparam string) posting.Handler {
-	return &PostingController{
-		p:      p,
-		cl:     cld,
-		ct:     ctx,
-		folder: uploadparam,
 	}
 }
 
