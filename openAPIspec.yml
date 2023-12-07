@@ -39,27 +39,72 @@ paths:
                       type: string
                       example: joko1212
       responses:
-        '200':
+        '201':
           description: Berhasil mendaftarkan User
           content:
             application/json:
               schema:
                 type: object
+                example:
+                  message:  "Pendaftaran Berhasil! Silakan Log in!"
+        '400':
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
                 properties:
-                    id:
-                      type: integer
-                      example: 1
-                    username:
-                      type: string
-                      example: joko
+                  message:
+                   type: string
+                   example: "Harap melengkapi data sesuai dengan format"
         '405':
-          description: Gagal Inputan salah
+          description: Gagal, method salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Method ini tidak tersedia untuk endpoint /register"
+        '409':
+          description: Gagal, data sudah ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Email sudah didaftarkan"          
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi 
+
+
   /login:
     post:
       tags:
         - User
       summary: Login ke dalam sistem
-      description: This can only be done by the logged in user.
+      description: Activity needed to gain access to the website.
       operationId: loginUser
       requestBody:
         description: Login user object
@@ -74,42 +119,105 @@ paths:
                     password:
                       type: string
                       example: joko1212
-      responses:
-        '200':
+      responses: ##iniyang benar, ada mesage dan data
+        '201':
           description: Berhasil Login
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                    id:
-                      type: integer
-                      example: 1
-                    username:
+                    message:
                       type: string
-                      example: joko
-                    token:
-                      type: string
-                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDE2MDU5OTgzNTMsImlhdCI6MTcwMTYwNTk5ODM1MiwiaWQiOjF9.vFsLrkcLzwzGQwmGTDnD0bNeDxyrI-6ouUgMYDtsomA
-        '405':
-          description: Gagal Inputan salah
-  /user:
-      get:
-        tags:
-          - User
-        summary: Get user All
-        description: This can only be done by the logged in user.
-        operationId: getUserAll
-        responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Response_Get'          
-          '404':
-            description: User not found
-  /user/{username}:
+                      example: "Log in berhasil! Selamat datang joko!"
+                    data:  
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                            example: joko
+                          password:
+                            type: string
+                            example: joko1212
+                          token:
+                            type: string
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDE2MDU5OTgzNTMsImlhdCI6MTcwMTYwNTk5ODM1MiwiaWQiOjF9.vFsLrkcLzwzGQwmGTDnD0bNeDxyrI-6ouUgMYDtsomA 
+        '400':
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan username dan password yang valid!"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:    
+        '401':
+          description: Gagal, Input tidak cocok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan username dan password yang benar"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message:  "Anda belum terdaftar"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                 
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                      
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                           
+  /user/{user_id}:
     get:
       tags:
         - User
@@ -117,9 +225,9 @@ paths:
       description: This can only be done by the logged in user.
       operationId: getUserByName
       parameters:
-        - name: username
+        - name: user_id
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
+          description: 'The id that needs to be fetched. Use user1 for testing. '
           required: true
           schema:
             type: string
@@ -133,9 +241,79 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response_Get'          
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "User successfully retrieved."
+                  data:
+                    $ref: '#/components/schemas/User' 
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "User_id harap diisi"
+                  data:  
+                    type: object
+                    example:
+        '401':
+          description: Akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example:
         '404':
-          description: User not found
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  User tidak ditemukan
+                  data:  
+                    type: object
+                    example:
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                    type: object
+                    example:                   
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                    type: object
+                    example:   
     put:
       tags:
         - User
@@ -143,27 +321,155 @@ paths:
       description: This can only be done by the logged in user.
       operationId: updateUser
       parameters:
-        - name: username
+        - name: user_id
           in: path
-          description: name that need to be deleted
+          description: id of user that need to be updated
           required: true
           schema:
             type: string
       requestBody:
         description: Update an existent user in the store
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                username:
+                  type: string
+                  example: Joko
+                email:
+                  type: string
+                  example: joko@gmail.com
+                adress:
+                  type: string
+                  example: Surabaya
+                bio:
+                  type: string
+                  example: Hai saya adalah joko 
+                avatar:
+                  type: string
+                  format: binary
+                  description: avatar user
+                password:
+                  type: string
+                  example: joko1212
+                new_password: 
+                  type: string
+   
       responses:
-        '200':
+        '201':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'          
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Profil berhasil diubah."
+                  data:
+                    type: array
+                    items:
+                     type: object
+                     properties: 
+                      user_id:
+                        type: integer
+                        example: 1
+                      username:
+                        type: string
+                        example: Joko
+                      email:
+                        type: string
+                        example: joko@gmail.com
+                      adress:
+                        type: string
+                        example: Surabaya
+                      bio:
+                        type: string
+                        example: Hai saya adalah joko 
+                      avatar:
+                        type: string
+                        example: image/joko.png       
+
+        '400':
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Masukkan input yang benar"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:          
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  Harap login terlebih dahulu
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                   
         '404':
-          description: User not found
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  User tidak ditemukan
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                                  
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                      
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                      
       security:
           - sosmed_auth:
               - write:user
@@ -175,21 +481,169 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
-        - name: username
+        - name: user_id
           in: path
-          description: The name that needs to be deleted
+          description: The id of user that needs to be deleted
           required: true
           schema:
             type: string
       responses:
         '200':
           description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "User successfully deleted."
+                  
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Masukkan user_id!"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Harap login!"
         '404':
-          description: User not found
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "User tidak ditemukan!" 
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                   
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                       
       security:
           - sosmed_auth:
               - write:user
               - delete:user
+  /user/{user_id}/profile:
+    get:
+      tags:
+        - User
+      summary: Mengambil data user sesuai id untuk profil
+      description: This can only be done by the logged in user.
+      operationId: getUserByName
+      parameters:
+        - name: user_id
+          in: path
+          description: 'The id that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      security:
+          - sosmed_auth:
+              - write:user
+              - read:user
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "User successfully retrieved."
+                  data:
+                    $ref: '#/components/schemas/Response_Get' 
+        '401':
+          description: Akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example:
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "User tidak ditemukan!"
+                  data:  
+                    type: object
+                    example:
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                    type: object
+                    example:                     
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                    type: object
+                    example:
+      
   /posting:
     post:
       tags:
@@ -199,12 +653,13 @@ paths:
       operationId: postPosting
       requestBody:
         description: Posting user object
+        required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                id:
+                user_id:
                   type: integer
                   example: 1
                 caption:
@@ -212,16 +667,75 @@ paths:
                   example: We live we dream
                 gambar:
                   type: string
-                  example: joko.png
+                  format: binary
+                  description: gambar untuk diupload
       responses:
-        '200':
+        '201':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Posting' 
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Postingan berhasil dibuat!
+                  data:
+                   $ref: '#/components/schemas/Posting' 
+               
+                  
         '400':
-          description: Invalid username supplied
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan postingan dan gambar yang sesuai, file tidak bisa dimuat"
+                  data:  
+                    type: object
+                    example:
+        '401':
+          description: Gagal, akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example: 
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                    type: object
+                    example:                      
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                    type: object
+                    example:            
       security:
           - sosmed_auth:
               - write:posting
@@ -229,7 +743,7 @@ paths:
     get:
       tags:
         - Posting
-      summary: Get All posting ( Tanpa Login )
+      summary: Get All posting untuk beranda
       description: Tanpa Login
       operationId: getPosting
       responses:
@@ -238,10 +752,115 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Posting' 
-        '400':
-          description: Invalid id posting
-  /posting/{id}:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Postingan ditemukan!
+                  data:
+                    type: array
+                    items:
+                     type: object
+                     properties:
+                     $ref: '#/components/schemas/Posting'
+                     maxitems: 10
+                    example: 
+                    - {
+                        posting_id: 3,
+                        caption: "We live, we love, we lie",
+                        gambar: "image/bluesmurf.jpg",
+                        total_comment: 3,
+                        user:
+                          {avatar:  "image/andi.png" ,
+                          username: "Andi",
+                          },
+                          
+                        created at: 2023-11-03 19:24:04.363,
+                    }
+                    - {
+                        posting_id: 4,
+                        caption: "Lorem ipsum dolor sit amet",
+                        gambar: "image/lorem.jpg",
+                        total_comment: 6,
+                        user:
+                          {avatar:  "image/jane.png", 
+                          username: "Jane",
+                          },
+                           
+                        created at: 2023-11-03 19:25:36.561,}
+                    - {
+                        posting_id: 5,
+                        caption: "semriwing",
+                        gambar: "image/semriwing.jpg",
+                        total_comment: 5,
+                        user: {
+                          avatar:  "image/andi.png",
+                          username: "Andi",
+                          },
+                           
+                        created at: 2023-11-03 20:37:05.754,}
+          
+        '401':
+          description: Akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:  
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Postingan tidak ditemukan!"
+                  data:  
+                      type: array
+                      items: 
+                       type: object
+                       example:  
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                      
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:               
+  /posting/{posting_id}:
     get:
       tags:
         - Posting
@@ -249,9 +868,9 @@ paths:
       description: This can only be done by the logged in user.
       operationId: getPostingbyID
       parameters:
-        - name: id
+        - name: posting_id
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
           required: true
           schema:
             type: string
@@ -265,9 +884,82 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Posting'          
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Postingan berhasil dimuat!
+                  data:
+                    $ref: '#/components/schemas/Posting'          
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Posting_id harap diisi"
+                  data:  
+                    type: object
+                    example:
+        '401':
+          description: Akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example:
         '404':
-          description: Posting not found
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan username dan password yang valid!"
+                  data:  
+                    type: object
+                    example:
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                      
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:              
     put:
       tags:
         - Posting
@@ -275,25 +967,30 @@ paths:
       description: This can only be done by the logged in user.
       operationId: updatePostingbyID
       parameters:
-        - name: id
+        - name: posting_id
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
+          description: 'The id of post that needs to be updated. Use 1 for testing. '
           required: true
           schema:
             type: string
       requestBody:
         description: Edit Caption Posting object
+        required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
                 type: object
                 properties:
-                    id:
+                    posting_id:
                       type: integer
                       example: 1
                     caption:
                       type: string
-                      example: We live we dream
+                      example: We live we dream we win
+                    gambar:
+                      type: string
+                      format: binary
+                      description: gambar untuk diupload
       responses:
         '200':
           description: successful operation
@@ -302,14 +999,109 @@ paths:
               schema:
                 type: object
                 properties:
-                    id:
+                 message:
+                  type: string
+                  example: Postingan berhasil diedit!
+                 data:
+                  type: array
+                  items: 
+                    type: object
+                    properties:
+                     posting_id:
                       type: integer
                       example: 1
-                    caption:
+                     caption:
                       type: string
-                      example: We live we dream       
+                      example: We live we dream we win
+                     gambar:
+                      type: string
+                      example: image/joko.png
+                     total_comment:
+                      type: integer
+                      example: 0
+                     user:
+                        $ref: '#/components/schemas/Response_User'
+                     created_at: 
+                      type: string
+                      example: 2023-10-30 09:36:33.596 
+                     comments:
+                      type: array
+                      example: 
+        '400':
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan input yang valid!"
+                  data:  
+                    type: array
+                    items: 
+                      type: object
+                      example:
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu!"
+                  data:  
+                    type: array
+                    items: 
+                     type: object
+                     example:                 
         '404':
-          description: Posting not found
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Postingan tidak ditemukan!"
+                  data:  
+                    type: array
+                    items: 
+                     type: object
+                     example:          
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                      
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:     
       security:
           - sosmed_auth:
               - write:posting
@@ -321,28 +1113,98 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteIdPost
       parameters:
-        - name: id
+        - name: posting_id
           in: path
-          description: The name that needs to be deleted
+          description: The id of post that needs to be deleted
           required: true
           schema:
             type: string
       responses:
         '200':
           description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: " Postingan dihapus!"
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Masukkan posting_id!"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Harap login!"
         '404':
-            description: posting not found
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Tidak ada post dengan posting_id yang diberikan."  
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                     
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                         
       security:
           - sosmed_auth:
               - delete:posting
               - read:posting
-  /comment:
+  /posting/{posting_id}/comment:
     post:
       tags:
         - Comment
       summary: Comment ke dalam posting
       description: This can only be done by the logged in user.
-      operationId: postCommnet
+      operationId: postComment
+      parameters:
+        - name: posting_id
+          in: path
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
       requestBody:
         description: Comment user object
         content:
@@ -350,52 +1212,344 @@ paths:
             schema:
               type: object
               properties:
-                id:
+                user_id:
                   type: integer
-                  example: 1
-                id_posting:
+                  example: 2
+                posting_id:
                   type: integer
                   example: 1
                 isi_comment:
                   type: string
                   example: Postingan nya bagus !!!
       responses:
-        '200':
+        '201':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment' 
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Comment berhasil dibuat!
+                  data:
+                   $ref: '#/components/schemas/Comment' 
         '400':
-          description: Invalid username supplied
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan komentar"
+                  data: 
+                   type: object
+                   example:
+        '401':
+          description: Gagal, akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data: 
+                   type: object
+                   example:
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data: 
+                   type: object
+                   example:                     
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data: 
+                   type: object
+                   example:            
       security:
           - sosmed_auth:
               - write:comment
               - read:comment
+  /posting/{posting_id}/comment/{comment_id}:
     get:
       tags:
-        - Comment
-      summary: Get All Comment ( Tanpa Login )
-      description: Get All comment tanpa login
-      operationId: getAllComment
+      - Comment
+      summary: Get comment by its id
+      description: this endpoint enable user to call their comment before editing
+      operationId: updateCommentById
+      parameters:
+        - name: posting_id
+          in: path
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+        - name: comment_id
+          in: path
+          description: The id of comment that needs to be edited
+          required: true
+          schema:
+            type: string
+      
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment' 
+               type: object
+               properties:
+                 message:
+                  type: string
+                  example: Comment berhasil dimuat
+                 data:
+                  $ref: '#/components/schemas/Comment'
+
         '400':
-          description: Invalid username supplied
-  /comment/{id}:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Comment_id harap diisi"
+                  data:  
+                    type: object
+                    example:
+        '401':
+          description: Akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu"
+                  data:  
+                    type: object
+                    example:
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Comment tidak ditemukan"
+                  data:  
+                    type: object
+                    example: 
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                    type: object
+                    example:                     
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                    type: object
+                    example:               
+      security:
+          - sosmed_auth:
+              - read:comment
+              - write:comment
+
+    put:
+      tags:
+        - Comment
+      summary: Edit comment by its id
+      description: this endpoint enable user to edit their comment
+      operationId: updateCommentById
+      parameters:
+        - name: comment_id
+          in: path
+          description: The id of comment that needs to be edited
+          required: true
+          schema:
+            type: string
+        - name: posting_id
+          in: path
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Edit Caption Posting object
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                  comment_id:
+                   type: string
+                   example: 1
+                  isi_comment:
+                    type: string
+                    example: Postingan nya buuuagus !!!
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+               type: object
+               properties:
+                 message:
+                  type: string
+                  example: Comment berhasil diubah
+                 data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      
+                      comment_id:
+                        type: integer
+                        example: 1 
+                      user:
+                            $ref: '#/components/schemas/Response_User'
+                      isi_comment:
+                        type: string
+                        example: Postingan nya buuuagus !!!
+                      created_at:
+                        type: string
+                        example: 2023-11-03 19:24:36.887
+        '400':
+          description: Gagal, Inputan salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Masukkan input yang valid!"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:   
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Harap login terlebih dahulu!"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                   
+        '404':
+          description: Gagal, data tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example:  "Comment tidak ditemukan!"
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:   
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:                      
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+                  data:  
+                   type: array
+                   items: 
+                    type: object
+                    example:     
+      security:
+          - sosmed_auth:
+              - read:comment
+              - write:comment
+
     delete:
       tags:
         - Comment
-      summary: Delete id Comment
+      summary: Delete Comment by its id
       description: This can only be done by the logged in user.
       operationId: deleteIdComment
       parameters:
-        - name: id
+        - name: posting_id
+          in: path
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+        - name: comment_id
           in: path
           description: The name that needs to be deleted
           required: true
@@ -404,8 +1558,70 @@ paths:
       responses:
         '200':
           description: successful operation
+          content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      description: The message to be displayed.
+                      example: "Comment berhasil dihapus."
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Masukkan comment_id!"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Harap login!"
         '404':
-            description: comment not found
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The message to be displayed.
+                    example: "Tidak ada comment dengan comment_id yang diberikan." 
+        '500':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: "Ada masalah di server" 
+                  
+        '503':
+          description: Gagal, masalah server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+                   example: Server sementara tidak dapat dihubungi     
+
       security:
           - sosmed_auth:
               - delete:comment
@@ -416,7 +1632,7 @@ components:
     User:
       type: object
       properties:
-        id:
+        user_id:
           type: integer
           example: 1
         username:
@@ -431,18 +1647,40 @@ components:
         bio:
           type: string
           example: Hai saya adalah joko 
-        gambar:
+        avatar:
           type: string
           example: image/joko.png
-        password:
-          type: string
-          example: joko1212
       xml:
-        name: User
+        name: user
+
+    User_Update:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: Joko
+        email:
+          type: string
+          example: joko@gmail.com
+        adress:
+          type: string
+          example: Surabaya
+        bio:
+          type: string
+          example: Hai saya adalah joko 
+        avatar:
+          type: string
+          example: image/joko.png
+      xml:
+        name: user_update
+
     Response_Get:
       type: object
       properties:
-        id:
+        user_id:
           type: integer
           example: 1
         username:
@@ -457,22 +1695,42 @@ components:
         bio:
           type: string
           example: Hai saya adalah joko
-        gambar:
+        avatar:
           type: string
           example: image/joko.png
+        posting: 
+          type: array
+          example: 
+            - posting_id: 1
+              caption: "We live, we love, we lie"
+              gambar: "image/bluesmurf.jpg"
+              total_comment: 3
+              user:
+                avatar:  image/joko.png
+                username: "Joko"
+            - posting_id: 8
+              caption: "Lorem ipsum dolor sit amet"
+              gambar: "image/lorem.jpg"
+              total_comment: 6
+              user:
+                avatar: image/joko.png 
+                username: Joko 
+            - posting_id: 9
+              caption: "semriwing"
+              gambar: "image/semriwing.jpg"
+              total_comment: 5
+              user:
+               avatar:  image/joko.png
+               username: "Joko"
       xml:
-        name: response_get
-   
+        name: response_get   
     Response_User:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
         username:
           type: string
           example: Joko
-        gambar:
+        avatar:
           type: string
           example: image/joko.png
       xml:
@@ -480,7 +1738,7 @@ components:
     Posting:
       type: object
       properties:
-        id:
+        posting_id:
           type: integer
           example: 1
         caption:
@@ -491,15 +1749,49 @@ components:
           example: image/joko.png
         total_comment:
           type: integer
-          example: 80
+          example: 0
         user:
-            $ref: '#/components/schemas/Response_User' 
+            $ref: '#/components/schemas/Response_User'
+        created_at: 
+          type: string
+          example: 2023-10-30 09:36:33.596 
+        comments:
+          type: array
+          example: 
       xml:
         name: posting
+    Posting_single:
+      type: object
+      properties:
+        posting_id:
+          type: integer
+          example: 1
+        caption:
+          type: string
+          example: We live we dream
+        gambar:
+          type: string
+          example: image/joko.png
+        total_comment:
+          type: integer
+          example: 0
+        user:
+            $ref: '#/components/schemas/Response_User'
+        comments: 
+          type: array
+          example:
+          - comment_id: 1 
+            user: 
+              $ref: '#/components/schemas/Response_User'
+            isi_comment: Postingan nya bagus !!!
+          
+
+      xml:
+        name: posting_single
     Response_Posting:
       type: object
       properties:
-        id:
+        posting_id:
           type: integer
           example: 1
         caption:
@@ -515,16 +1807,17 @@ components:
     Comment:
       type: object
       properties:
-        id:
+        comment_id:
           type: integer
-          example: 1
-        posting:
-              $ref: '#/components/schemas/Response_Posting' 
+          example: 1 
         user:
-              $ref: '#/components/schemas/Response_User' 
+              $ref: '#/components/schemas/Response_User'
         isi_comment:
           type: string
           example: Postingan nya bagus !!!
+        created_at:
+          type: string
+          example: 2023-11-03 19:24:36.887
       xml:
         name: comment
   securitySchemes:
