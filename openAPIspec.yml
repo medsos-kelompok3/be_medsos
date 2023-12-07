@@ -1191,13 +1191,20 @@ paths:
           - sosmed_auth:
               - delete:posting
               - read:posting
-  /comment:
+  /posting/{posting_id}/comment:
     post:
       tags:
         - Comment
       summary: Comment ke dalam posting
       description: This can only be done by the logged in user.
-      operationId: postCommnet
+      operationId: postComment
+      parameters:
+        - name: posting_id
+          in: path
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
       requestBody:
         description: Comment user object
         content:
@@ -1283,7 +1290,7 @@ paths:
           - sosmed_auth:
               - write:comment
               - read:comment
-  /comment/{comment_id}:
+  /posting/{posting_id}/comment/{comment_id}:
     get:
       tags:
       - Comment
@@ -1291,6 +1298,12 @@ paths:
       description: this endpoint enable user to call their comment before editing
       operationId: updateCommentById
       parameters:
+        - name: posting_id
+          in: path
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
         - name: comment_id
           in: path
           description: The id of comment that needs to be edited
@@ -1392,6 +1405,12 @@ paths:
         - name: comment_id
           in: path
           description: The id of comment that needs to be edited
+          required: true
+          schema:
+            type: string
+        - name: posting_id
+          in: path
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
           required: true
           schema:
             type: string
@@ -1524,6 +1543,12 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteIdComment
       parameters:
+        - name: posting_id
+          in: path
+          description: 'The id of post that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
         - name: comment_id
           in: path
           description: The name that needs to be deleted
