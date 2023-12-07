@@ -2,14 +2,15 @@ package repository
 
 import (
 	"be_medsos/features/user"
+	"errors"
 
 	"gorm.io/gorm"
 )
 
 type UserModel struct {
 	gorm.Model
-	Username string
-	Email    string
+	Username string `gorm:"unique"`
+	Email    string `gorm:"unique"`
 	Address  string
 	Bio      string
 	Avatar   string
@@ -27,20 +28,17 @@ func New(db *gorm.DB) user.Repository {
 }
 
 // add new user
-func (uq *UserQuery) AddUser(input user.User) (user.User, error) {
+func (uq *UserQuery) AddUser(input user.User) error {
 	var newUser = new(UserModel)
 	newUser.Username = input.Username
 	newUser.Email = input.Email
 	newUser.Password = input.Password
 	newUser.Address = input.Address
 	if err := uq.db.Create(&newUser).Error; err != nil {
-		return user.User{}, err
+		return errors.New("username/email sudah didaftarkan")
 	}
-	var result = new(user.User)
-	result.ID = newUser.ID
-	result.Username = newUser.Username
 
-	return *result, nil
+	return nil
 }
 
 // Login implements user.Repository.
@@ -123,9 +121,13 @@ func (uq *UserQuery) UpdateUser(input user.User) (user.User, error) {
 
 	// Jika tidak ada buku ditemukan
 	if proses.ID == 0 {
-		return user.User{}, nil
+		err := errors.New("user tidak ditemukan")
+		return user.User{}, err
 	}
 
+	if input.Username != "" {
+		proses.Username = input.Username
+	}
 	if input.Email != "" {
 		proses.Email = input.Email
 	}
@@ -139,6 +141,10 @@ func (uq *UserQuery) UpdateUser(input user.User) (user.User, error) {
 	if input.Address != "" {
 		proses.Address = input.Address
 	}
+	if input.NewPassword != "" {
+		proses.Password = input.NewPassword
+	}
+
 	if err := uq.db.Save(&proses).Error; err != nil {
 
 		return user.User{}, err
@@ -150,6 +156,7 @@ func (uq *UserQuery) UpdateUser(input user.User) (user.User, error) {
 		Address:  proses.Address,
 		Avatar:   proses.Avatar,
 		Password: proses.Password,
+		Bio:      proses.Bio,
 	}
 
 	return result, nil

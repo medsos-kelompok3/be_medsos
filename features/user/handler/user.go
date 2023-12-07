@@ -5,6 +5,7 @@ import (
 	"be_medsos/helper/jwt"
 	cld "be_medsos/utils/cld"
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -43,20 +44,22 @@ func (uc *UserController) Register() echo.HandlerFunc {
 		processInput.Email = input.Email
 		processInput.Address = input.Address
 		processInput.Password = input.Password
-		result, err := uc.srv.AddUser(*processInput)
-		if err != nil {
+		result := uc.srv.AddUser(*processInput)
+		if result != nil {
+			//di sini mendengarkan error message untuk http code yg sesuai
+			//"message": "Email sudah didaftarkan" 409
+			if strings.Contains(result.Error(), "didaftarkan") {
+				return c.JSON(http.StatusConflict, map[string]any{
+					"message": "Data sudah didaftarkan, harap login/mendaftar dengan username/email baru",
+				})
+			}
 			return c.JSON(http.StatusBadRequest, map[string]any{
-				"message": "eror repo",
+				"message": "Harap melengkapi data sesuai dengan format",
 			})
 		}
-		var responseInput = new(RegisResponse)
-		responseInput.ID = result.ID
 
-		responseInput.Username = result.Username
-
-		return c.JSON(http.StatusOK, map[string]any{
+		return c.JSON(http.StatusCreated, map[string]any{
 			"message": "success login data",
-			"data":    responseInput,
 		})
 	}
 }
@@ -100,6 +103,7 @@ func (uc *UserController) Login() echo.HandlerFunc {
 		var response = new(LoginResponse)
 		response.Username = result.Username
 		response.ID = result.ID
+		response.Password = result.Password
 		response.Token = strToken
 
 		return c.JSON(http.StatusOK, map[string]any{
@@ -199,10 +203,56 @@ func (uc *UserController) Update() echo.HandlerFunc {
 				"message": "input yang diberikan tidak sesuai",
 			})
 		}
+
 		formHeader, err := c.FormFile("avatar")
 		if err != nil {
+			if errors.Is(err, http.ErrMissingFile) {
+				var inputProcess = new(user.User)
+				inputProcess.Avatar = ""
+				inputProcess.ID = input.ID
+				inputProcess.Address = input.Address
+				inputProcess.Password = input.Password
+				inputProcess.NewPassword = input.NewPassword
+				inputProcess.Bio = input.Bio
+				inputProcess.Email = input.Email
+				inputProcess.Username = input.Username
+
+				result, err := uc.srv.UpdateUser(c.Get("user").(*gojwt.Token), *inputProcess)
+
+				if err != nil {
+					c.Logger().Error("ERROR Register, explain:", err.Error())
+					var statusCode = http.StatusInternalServerError
+					var message = "terjadi permasalahan ketika memproses data"
+
+					if strings.Contains(err.Error(), "terdaftar") {
+						statusCode = http.StatusBadRequest
+						message = "data yang diinputkan sudah terdaftar ada sistem"
+					}
+					if strings.Contains(err.Error(), "yang lama") {
+						statusCode = http.StatusBadRequest
+						message = "harap masukkan password yang lama jika ingin mengganti password"
+					}
+
+					return c.JSON(statusCode, map[string]any{
+						"message": message,
+					})
+				}
+
+				var response = new(PutResponse)
+				response.ID = result.ID
+				response.Username = result.Username
+				response.Email = result.Email
+				response.Bio = result.Bio
+				response.Address = result.Address
+				response.Avatar = result.Avatar
+
+				return c.JSON(http.StatusCreated, map[string]any{
+					"message": "success create data",
+					"data":    response,
+				})
+			}
 			return c.JSON(
-				http.StatusInternalServerError, map[string]any{
+				http.StatusBadRequest, map[string]any{
 					"message": "formheader error",
 				})
 
@@ -211,10 +261,11 @@ func (uc *UserController) Update() echo.HandlerFunc {
 		formFile, err := formHeader.Open()
 		if err != nil {
 			return c.JSON(
-				http.StatusInternalServerError, map[string]any{
+				http.StatusBadRequest, map[string]any{
 					"message": "formfile error",
 				})
 		}
+		defer formFile.Close()
 
 		link, err := cld.UploadImage(uc.cl, uc.ct, formFile, uc.folder)
 		if err != nil {
@@ -235,9 +286,11 @@ func (uc *UserController) Update() echo.HandlerFunc {
 		inputProcess.Avatar = link
 		inputProcess.ID = input.ID
 		inputProcess.Address = input.Address
-
+		inputProcess.Password = input.Password
+		inputProcess.NewPassword = input.NewPassword
 		inputProcess.Bio = input.Bio
 		inputProcess.Email = input.Email
+		inputProcess.Username = input.Username
 
 		result, err := uc.srv.UpdateUser(c.Get("user").(*gojwt.Token), *inputProcess)
 

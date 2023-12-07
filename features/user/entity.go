@@ -6,13 +6,14 @@ import (
 )
 
 type User struct {
-	ID       uint
-	Username string
-	Email    string
-	Address  string
-	Bio      string
-	Avatar   string
-	Password string
+	ID          uint
+	Username    string
+	Email       string
+	Address     string
+	Bio         string
+	Avatar      string
+	Password    string
+	NewPassword string
 }
 
 type Handler interface {
@@ -24,7 +25,7 @@ type Handler interface {
 }
 
 type Service interface {
-	AddUser(input User) (User, error)
+	AddUser(input User) error
 	Login(username string, password string) (User, error)
 	DapatUser(username string) (User, error)
 	HapusUser(token *jwt.Token, userID uint) error
@@ -32,7 +33,7 @@ type Service interface {
 }
 
 type Repository interface {
-	AddUser(input User) (User, error)
+	AddUser(input User) error
 	Login(username string) (User, error)
 	GetUserByUsername(username string) (User, error)
 	GetUserByID(userID uint) (*User, error)
