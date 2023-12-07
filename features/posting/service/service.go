@@ -29,6 +29,16 @@ func New(model posting.Repository) posting.Service {
 	}
 }
 
+// HapusPosting implements posting.Service.
+func (ps *PostingService) HapusPosting(token *golangjwt.Token, postingID uint) error {
+	err := ps.r.DeletePosting(postingID)
+	if err != nil {
+		return errors.New("failed to delete the posting")
+	}
+
+	return nil
+}
+
 // SemuaPosting implements posting.Service.
 func (ps *PostingService) SemuaPosting(page int, limit int) ([]posting.Posting, error) {
 	result, err := ps.r.GetTanpaPosting(page, limit)

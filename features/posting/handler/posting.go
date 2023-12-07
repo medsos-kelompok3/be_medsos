@@ -29,6 +29,41 @@ func New(p posting.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 	}
 }
 
+// Delete implements posting.Handler.
+func (pc *PostingController) Delete() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		postingID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+			})
+		}
+
+		err = pc.p.HapusPosting(c.Get("user").(*golangjwt.Token), uint(postingID))
+		if err != nil {
+			c.Logger().Error("ERROR Delete postingan, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika menghapus postingan"
+
+			if strings.Contains(err.Error(), "tidak ditemukan") {
+				statusCode = http.StatusNotFound
+				message = "postingan tidak ditemukan"
+			} else if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusForbidden
+				message = "Anda tidak memiliki izin untuk menghapus postingan ini"
+			}
+
+			return c.JSON(statusCode, map[string]interface{}{
+				"message": message,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success delete postingan",
+		})
+	}
+}
+
 // Update implements posting.Handler.
 func (pc *PostingController) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {

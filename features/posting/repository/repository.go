@@ -20,6 +20,20 @@ type PostingQuery struct {
 	db *gorm.DB
 }
 
+// DeletePosting implements posting.Repository.
+func (pq *PostingQuery) DeletePosting(postingID uint) error {
+	var postingModel PostingModel
+
+	if err := pq.db.First(&postingModel, postingID).Error; err != nil {
+		return err
+	}
+	if err := pq.db.Delete(&postingModel, postingID).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // UpdatePosting implements posting.Repository.
 func (pq *PostingQuery) UpdatePosting(input posting.Posting) (posting.Posting, error) {
 	var proses PostingModel

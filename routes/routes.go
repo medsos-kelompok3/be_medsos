@@ -31,4 +31,5 @@ func RoutePosting(e *echo.Echo, pc posting.Handler) {
 	e.POST("/posting", pc.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/posting", pc.GetAll())
 	e.PUT("/posting/:id", pc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.DELETE("/posting/:id", pc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
