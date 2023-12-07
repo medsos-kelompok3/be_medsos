@@ -57,6 +57,11 @@ func TestUpdateComment(t *testing.T) {
 	repo := mocks.NewRepository(t)
 	m := service.New(repo)
 
+	token := &gojwt.Token{
+		Claims: gojwt.MapClaims{
+			"id": float64(1),
+		},
+	}
 	input := comment.Comment{
 		IsiComment: "Updated comment",
 		PostingID:  uint(2),
@@ -91,6 +96,11 @@ func TestDelete(t *testing.T) {
 	m := service.New(repo)
 
 	commentID := uint(2)
+	token := &gojwt.Token{
+		Claims: gojwt.MapClaims{
+			"id": float64(1),
+		},
+	}
 	SalahID := uint(0)
 	t.Run("Success Case", func(t *testing.T) {
 		repo.On("DeleteComment", commentID).Return(nil).Once()
