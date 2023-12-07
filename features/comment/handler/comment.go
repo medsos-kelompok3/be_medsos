@@ -14,6 +14,40 @@ type CommentController struct {
 	c comment.Service
 }
 
+// Delete implements comment.Handler.
+func (cc *CommentController) Delete() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		commentID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID comment tidak valid",
+			})
+		}
+		err = cc.c.HapusComment(c.Get("user").(*golangjwt.Token), uint(commentID))
+		if err != nil {
+			c.Logger().Error("ERROR Delete postingan, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika menghapus postingan"
+
+			if strings.Contains(err.Error(), "tidak ditemukan") {
+				statusCode = http.StatusNotFound
+				message = "postingan tidak ditemukan"
+			} else if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusForbidden
+				message = "Anda tidak memiliki izin untuk menghapus postingan ini"
+			}
+
+			return c.JSON(statusCode, map[string]interface{}{
+				"message": message,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success delete comment",
+		})
+	}
+}
+
 func New(c comment.Service) comment.Handler {
 	return &CommentController{
 		c: c,

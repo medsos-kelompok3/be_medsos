@@ -13,6 +13,16 @@ type CommentService struct {
 	c comment.Repository
 }
 
+// HapusComment implements comment.Service.
+func (cs *CommentService) HapusComment(token *golangjwt.Token, commentID uint) error {
+	err := cs.c.DeleteComment(commentID)
+	if err != nil {
+		return errors.New("failed to delete the posting")
+	}
+
+	return nil
+}
+
 func New(model comment.Repository) comment.Service {
 	return &CommentService{
 		c: model,

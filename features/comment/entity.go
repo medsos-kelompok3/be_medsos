@@ -16,14 +16,17 @@ type Comment struct {
 type Handler interface {
 	Add() echo.HandlerFunc
 	Update() echo.HandlerFunc
+	Delete() echo.HandlerFunc
 }
 
 type Service interface {
 	AddComment(token *jwt.Token, newComment Comment) (Comment, error)
 	UpdateComment(token *jwt.Token, input Comment) (Comment, error)
+	HapusComment(token *jwt.Token, commentID uint) error
 }
 
 type Repository interface {
 	InsertComment(userID uint, postingID uint, newComment Comment) (Comment, error)
 	UpdateComment(input Comment) (Comment, error)
+	DeleteComment(commentID uint) error
 }

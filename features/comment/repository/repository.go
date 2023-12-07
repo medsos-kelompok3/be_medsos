@@ -20,6 +20,20 @@ type CommentQuery struct {
 	db *gorm.DB
 }
 
+// DeleteComment implements comment.Repository.
+func (cq *CommentQuery) DeleteComment(commentID uint) error {
+	var commentModel CommentModel
+
+	if err := cq.db.First(&commentModel, commentID).Error; err != nil {
+		return err
+	}
+	if err := cq.db.Delete(&commentModel, commentID).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func New(db *gorm.DB) comment.Repository {
 	return &CommentQuery{
 		db: db,
