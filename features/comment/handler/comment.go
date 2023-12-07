@@ -29,6 +29,7 @@ func (cc *CommentController) Add() echo.HandlerFunc {
 			})
 		}
 		var inputProses = new(comment.Comment)
+		inputProses.PostingID = input.PostingID
 		inputProses.IsiComment = input.IsiComment
 
 		result, err := cc.c.AddComment(c.Get("user").(*golangjwt.Token), *inputProses)

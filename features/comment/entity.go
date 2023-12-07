@@ -8,6 +8,7 @@ import (
 type Comment struct {
 	ID         uint
 	PostingID  uint
+	UserID     uint
 	UserName   string
 	IsiComment string
 }
