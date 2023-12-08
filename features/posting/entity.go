@@ -1,16 +1,18 @@
 package posting
 
 import (
+	"be_medsos/features/models"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
-type Posting struct {
-	ID            uint
-	Caption       string
-	GambarPosting string
-	UserName      string
-}
+// type Posting struct {
+// 	PostingID            uint
+// 	Caption       string
+// 	GambarPosting string
+// 	UserName      string
+// }
 
 type Handler interface {
 	Add() echo.HandlerFunc
@@ -20,15 +22,15 @@ type Handler interface {
 }
 
 type Service interface {
-	AddPosting(token *jwt.Token, newPosting Posting) (Posting, error)
-	UpdatePosting(token *jwt.Token, input Posting) (Posting, error)
-	SemuaPosting(page, limit int) ([]Posting, error)
+	AddPosting(token *jwt.Token, newPosting models.Posting) (models.Posting, error)
+	UpdatePosting(token *jwt.Token, input models.Posting) (models.Posting, error)
+	SemuaPosting(page, limit int) ([]models.Posting, error)
 	HapusPosting(token *jwt.Token, postingID uint) error
 }
 
 type Repository interface {
-	InsertPosting(userID uint, newPosting Posting) (Posting, error)
+	InsertPosting(userID uint, newPosting models.Posting) (models.Posting, error)
 	DeletePosting(postingID uint) error
-	UpdatePosting(input Posting) (Posting, error)
-	GetTanpaPosting(page, limit int) ([]Posting, error)
+	UpdatePosting(input models.Posting) (models.Posting, error)
+	GetTanpaPosting(page, limit int) ([]models.Posting, error)
 }
