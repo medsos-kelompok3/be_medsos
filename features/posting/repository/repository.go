@@ -3,7 +3,9 @@ package repository
 import (
 	"be_medsos/features/models"
 	"be_medsos/features/posting"
+	"errors"
 	"fmt"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -111,6 +113,60 @@ func (pq *PostingQuery) InsertPosting(userID uint, newPosting models.Posting) (m
 	newPosting.UserName = inputDB.UserName
 
 	return newPosting, nil
+}
+
+func (pq *PostingQuery) GetOne(id uint) (models.Posting, []models.Comment, error) {
+	var post models.PostingModel
+	var comments []models.CommentModel
+	if err := pq.db.First(&post, id).Error; err != nil {
+		errors.New("pos tidak ditemukan")
+		return models.Posting{}, []models.Comment{}, err
+	}
+	if err := pq.db.Find(&comments).Where("posting_id = ?", id); err != nil {
+		if strings.Contains(err.Error.Error(), "not found") {
+			comments = nil
+			response := models.Posting{
+				ID:            post.ID,
+				Caption:       post.Caption,
+				GambarPosting: post.GambarPosting,
+				UserID:        post.User_id,
+				UserName:      post.UserName,
+				Avatar:        post.Avatar,
+				CreatedAt:     post.CreatedAt.String(),
+				CommentCount:  int64(0),
+			}
+			return response, nil, nil
+		}
+	}
+
+	// iterasi array komen
+	var commentsResp []models.Comment
+	for _, element := range comments {
+		newkomen := models.Comment{
+			ID:         element.ID,
+			PostingID:  element.PostingID,
+			UserID:     element.PostingID,
+			UserName:   element.UserName,
+			Avatar:     element.Avatar,
+			IsiComment: element.IsiComment,
+			CreatedAt:  element.CreatedAt.String(),
+		}
+		commentsResp = append(commentsResp, newkomen)
+
+	}
+	// iterasi respons posting
+	response := models.Posting{
+		ID:            post.ID,
+		Caption:       post.Caption,
+		GambarPosting: post.GambarPosting,
+		UserID:        post.User_id,
+		UserName:      post.UserName,
+		Avatar:        post.Avatar,
+		CreatedAt:     post.CreatedAt.String(),
+		CommentCount:  int64(len(commentsResp)),
+	}
+	return response, nil, nil
+
 }
 
 func New(db *gorm.DB) posting.Repository {

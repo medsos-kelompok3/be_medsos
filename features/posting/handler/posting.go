@@ -338,8 +338,40 @@ func (pc *PostingController) Add() echo.HandlerFunc {
 	}
 }
 
-// func (pc *PostingController) GetOne() echo.HandlerFunc {
-// 	return func(c echo.Context) error {
+func (pc *PostingController) GetOne() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// verifikasi
+		postID, err := strconv.ParseUint(c.Param("posting_id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "masukkan parameter yang benar",
+				"data":    nil,
+			})
+		}
+		// ngambildata
 
-// 	}
-// }
+		post, comment, err := pc.p.GetOne(uint(postID))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "masalah di repo",
+				"data":    nil,
+			})
+		}
+
+		// insertdata
+		data := GetResponse{
+			ID:            post.ID,
+			Caption:       post.Caption,
+			GambarPosting: post.GambarPosting,
+			UserName:      post.UserName,
+			Avatar:        post.Avatar,
+			CreatedAt:     post.CreatedAt,
+			Comments:      comment,
+		}
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "postingan didapatkan",
+			"data":    data,
+		})
+	}
+}

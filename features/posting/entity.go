@@ -19,7 +19,7 @@ type Handler interface {
 	GetAll() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
-	// GetOne() echo.HandlerFunc
+	GetOne() echo.HandlerFunc
 }
 
 type Service interface {
@@ -27,6 +27,7 @@ type Service interface {
 	UpdatePosting(token *jwt.Token, input models.Posting) (models.Posting, error)
 	SemuaPosting(page, limit int) ([]models.Posting, error)
 	HapusPosting(token *jwt.Token, postingID uint) error
+	GetOne(id uint) (models.Posting, []models.Comment, error)
 }
 
 type Repository interface {
@@ -34,4 +35,5 @@ type Repository interface {
 	DeletePosting(postingID uint) error
 	UpdatePosting(input models.Posting) (models.Posting, error)
 	GetTanpaPosting(page, limit int) ([]models.Posting, error)
+	GetOne(id uint) (models.Posting, []models.Comment, error)
 }

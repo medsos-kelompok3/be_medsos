@@ -177,35 +177,43 @@ func (uq *UserQuery) GetProfil(id uint) (models.User, []models.Posting, error) {
 	var postingproses = new([]models.PostingModel)
 	if err := uq.db.Find(&postingproses).Where("user_id = ?", id); err.Error != nil {
 		if strings.Contains(err.Error.Error(), "not found") {
-			errors.New("User tidak memiliki postingan, 404")
-
-			return *userproses, nil, err.Error
+			*postingproses = []models.PostingModel{}
 		}
+		return *userproses, nil, err.Error
 	}
+
 	//ngambil jumlah komen
-	var jumlahkomen []int64
-	for _, post := range *postingproses {
-		var comments models.CommentModel
-		var count int64
-		uq.db.Model(&comments).Where("posting_id = ?", post.ID).Count(&count)
-		jumlahkomen = append(jumlahkomen, count)
-	}
-
-	// iterasi ke posting
-	var postResponse = new([]models.Posting)
-	for n, post := range *postingproses {
-		isiposting := models.Posting{
-			ID:            post.ID,
-			Caption:       post.Caption,
-			GambarPosting: post.GambarPosting,
-			UserName:      post.UserName,
-			Avatar:        post.Avatar,
-			CommentCount:  jumlahkomen[n],
-			UserID:        post.User_id,
-			CreatedAt:     post.CreatedAt.String(),
+	if len(*postingproses) != 0 {
+		var jumlahkomen []int64
+		for _, post := range *postingproses {
+			var comments models.CommentModel
+			var count int64
+			uq.db.Model(&comments).Where("posting_id = ?", post.ID).Count(&count)
+			jumlahkomen = append(jumlahkomen, count)
 		}
-		*postResponse = append(*postResponse, isiposting)
+
+		// iterasi ke posting
+		var postResponse = new([]models.Posting)
+		for n, post := range *postingproses {
+			isiposting := models.Posting{
+				ID:            post.ID,
+				Caption:       post.Caption,
+				GambarPosting: post.GambarPosting,
+				UserName:      post.UserName,
+				Avatar:        post.Avatar,
+				CommentCount:  jumlahkomen[n],
+				UserID:        post.User_id,
+				CreatedAt:     post.CreatedAt.String(),
+			}
+			*postResponse = append(*postResponse, isiposting)
+		}
+		return *userproses, *postResponse, nil
 	}
+	if len(*postingproses) == 0 {
+		var postResponse = new([]models.Posting)
+		return *userproses, *postResponse, nil
+	}
+	var postResponse = new([]models.Posting)
 
 	return *userproses, *postResponse, nil
 

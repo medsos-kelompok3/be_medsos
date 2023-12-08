@@ -64,3 +64,14 @@ func (ps *PostingService) AddPosting(token *golangjwt.Token, newPosting models.P
 	}
 	return result, nil
 }
+
+func (ps *PostingService) GetOne(id uint) (models.Posting, []models.Comment, error) {
+	post, comments, err := ps.r.GetOne(id)
+	if err != nil {
+		if strings.Contains(err.Error(), "") {
+			return models.Posting{}, []models.Comment{}, err
+		}
+
+	}
+	return post, comments, nil
+}
