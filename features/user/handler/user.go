@@ -207,9 +207,15 @@ func (uc *UserController) Update() echo.HandlerFunc {
 		formHeader, err := c.FormFile("avatar")
 		if err != nil {
 			if errors.Is(err, http.ErrMissingFile) {
+				userID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+				if err != nil {
+					return c.JSON(http.StatusBadRequest, map[string]interface{}{
+						"message": "ID user tidak valid",
+					})
+				}
 				var inputProcess = new(user.User)
 				inputProcess.Avatar = ""
-				inputProcess.ID = input.ID
+				inputProcess.ID = uint(userID)
 				inputProcess.Address = input.Address
 				inputProcess.Password = input.Password
 				inputProcess.NewPassword = input.NewPassword
@@ -281,10 +287,16 @@ func (uc *UserController) Update() echo.HandlerFunc {
 				})
 			}
 		}
+		userID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+			})
+		}
 
 		var inputProcess = new(user.User)
 		inputProcess.Avatar = link
-		inputProcess.ID = input.ID
+		inputProcess.ID = uint(userID)
 		inputProcess.Address = input.Address
 		inputProcess.Password = input.Password
 		inputProcess.NewPassword = input.NewPassword
