@@ -6,6 +6,7 @@ import (
 	cld "be_medsos/utils/cld"
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -341,7 +342,9 @@ func (pc *PostingController) Add() echo.HandlerFunc {
 func (pc *PostingController) GetOne() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// verifikasi
-		postID, err := strconv.ParseUint(c.Param("posting_id"), 10, 64)
+		fmt.Println("Lorem")
+		id, err := strconv.Atoi(c.Param("posting_id"))
+
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "masukkan parameter yang benar",
@@ -349,15 +352,16 @@ func (pc *PostingController) GetOne() echo.HandlerFunc {
 			})
 		}
 		// ngambildata
-
-		post, comment, err := pc.p.GetOne(uint(postID))
+		fmt.Println("Ipsum")
+		poostid := uint(id)
+		post, comment, err := pc.p.GetOne(poostid)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "masalah di repo",
 				"data":    nil,
 			})
 		}
-
+		fmt.Println("Dolor")
 		// insertdata
 		data := GetResponse{
 			ID:            post.ID,
