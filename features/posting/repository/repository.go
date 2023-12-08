@@ -99,6 +99,8 @@ func (pq *PostingQuery) InsertPosting(userID uint, newPosting models.Posting) (m
 		return models.Posting{}, err
 	}
 	inputDB.UserName = user.Username
+	inputDB.Avatar = user.Avatar
+	inputDB.User_id = userID
 
 	if err := pq.db.Create(&inputDB).Error; err != nil {
 		// Handle error saat menyimpan posting ke dalam database

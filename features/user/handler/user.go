@@ -391,7 +391,7 @@ func (uc *UserController) GetUserDetails() echo.HandlerFunc {
 			Avatar:   proses.Avatar,
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "Server error",
+			"message": "Data berhasil diambil",
 			"data":    response,
 		})
 	}

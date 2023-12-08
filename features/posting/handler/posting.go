@@ -5,6 +5,7 @@ import (
 	"be_medsos/features/posting"
 	cld "be_medsos/utils/cld"
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -76,6 +77,49 @@ func (pc *PostingController) Update() echo.HandlerFunc {
 		}
 		formHeader, err := c.FormFile("gambar_posting")
 		if err != nil {
+			if errors.Is(err, http.ErrMissingFile) {
+				// coding jika tak ada gambar
+				postingID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+				if err != nil {
+					return c.JSON(http.StatusBadRequest, map[string]interface{}{
+						"message": "ID posting tidak valid",
+					})
+				}
+
+				var inputProcess = models.Posting{
+					ID:            uint(postingID),
+					Caption:       input.Caption,
+					GambarPosting: "",
+				}
+
+				result, err := pc.p.UpdatePosting(c.Get("user").(*golangjwt.Token), inputProcess)
+
+				if err != nil {
+					c.Logger().Error("ERROR Register, explain:", err.Error())
+					var statusCode = http.StatusInternalServerError
+					var message = "terjadi permasalahan ketika memproses data"
+
+					if strings.Contains(err.Error(), "terdaftar") {
+						statusCode = http.StatusBadRequest
+						message = "data yang diinputkan sudah terdaftar ada sistem"
+					}
+
+					return c.JSON(statusCode, map[string]any{
+						"message": message,
+					})
+				}
+
+				var response = new(PutResponse)
+				response.ID = result.ID
+				response.Caption = result.Caption
+				response.GambarPosting = result.GambarPosting
+				response.UserName = result.UserName
+
+				return c.JSON(http.StatusCreated, map[string]any{
+					"message": "success create data",
+					"data":    response,
+				})
+			}
 			return c.JSON(
 				http.StatusInternalServerError, map[string]any{
 					"message": "formheader error",
@@ -179,7 +223,7 @@ func (pc *PostingController) GetAll() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message":    "Success fetching all coupon data",
+			"message":    "Success fetching all Posts data",
 			"data":       response,
 			"pagination": map[string]interface{}{"page": page, "limit": limit},
 		})
@@ -191,12 +235,47 @@ func (pc *PostingController) Add() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input = new(PostingRequest)
 		if err := c.Bind(input); err != nil {
+
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"message": "input yang diberikan tidak sesuai",
 			})
 		}
 		formHeader, err := c.FormFile("gambar_posting")
 		if err != nil {
+			if errors.Is(err, http.ErrMissingFile) {
+				var inputProcess = new(models.Posting)
+				inputProcess.GambarPosting = ""
+				inputProcess.Caption = input.Caption
+
+				result, err := pc.p.AddPosting(c.Get("user").(*golangjwt.Token), *inputProcess)
+
+				if err != nil {
+					c.Logger().Error("ERROR Register, explain:", err.Error())
+					var statusCode = http.StatusInternalServerError
+					var message = "terjadi permasalahan ketika memproses data"
+
+					if strings.Contains(err.Error(), "terdaftar") {
+						statusCode = http.StatusBadRequest
+						message = "data yang diinputkan sudah terdaftar ada sistem"
+					}
+
+					return c.JSON(statusCode, map[string]any{
+						"message": message,
+					})
+				}
+
+				var response = new(PostingResponse)
+				response.ID = result.ID
+				response.Caption = result.Caption
+				response.GambarPosting = result.GambarPosting
+				response.UserName = result.UserName
+
+				return c.JSON(http.StatusCreated, map[string]any{
+					"message": "success create data",
+					"data":    response,
+				})
+
+			}
 			return c.JSON(
 				http.StatusInternalServerError, map[string]any{
 					"message": "formheader error",
@@ -258,3 +337,9 @@ func (pc *PostingController) Add() echo.HandlerFunc {
 		})
 	}
 }
+
+// func (pc *PostingController) GetOne() echo.HandlerFunc {
+// 	return func(c echo.Context) error {
+
+// 	}
+// }

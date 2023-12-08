@@ -187,7 +187,7 @@ func (uq *UserQuery) GetProfil(id uint) (models.User, []models.Posting, error) {
 	for _, post := range *postingproses {
 		var comments models.CommentModel
 		var count int64
-		uq.db.Model(&comments).Where("postingid = ?", post.ID).Count(&count)
+		uq.db.Model(&comments).Where("posting_id = ?", post.ID).Count(&count)
 		jumlahkomen = append(jumlahkomen, count)
 	}
 
@@ -201,6 +201,8 @@ func (uq *UserQuery) GetProfil(id uint) (models.User, []models.Posting, error) {
 			UserName:      post.UserName,
 			Avatar:        post.Avatar,
 			CommentCount:  jumlahkomen[n],
+			UserID:        post.User_id,
+			CreatedAt:     post.CreatedAt.String(),
 		}
 		*postResponse = append(*postResponse, isiposting)
 	}
