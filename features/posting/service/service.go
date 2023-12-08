@@ -1,6 +1,7 @@
 package service
 
 import (
+	"be_medsos/features/models"
 	"be_medsos/features/posting"
 	"be_medsos/helper/jwt"
 	"errors"
@@ -14,11 +15,11 @@ type PostingService struct {
 }
 
 // UpdatePosting implements posting.Service.
-func (ps *PostingService) UpdatePosting(token *golangjwt.Token, input posting.Posting) (posting.Posting, error) {
+func (ps *PostingService) UpdatePosting(token *golangjwt.Token, input models.Posting) (models.Posting, error) {
 	respons, err := ps.r.UpdatePosting(input)
 	if err != nil {
 
-		return posting.Posting{}, errors.New("kesalahan pada database")
+		return models.Posting{}, errors.New("kesalahan pada database")
 	}
 	return respons, nil
 }
@@ -40,7 +41,7 @@ func (ps *PostingService) HapusPosting(token *golangjwt.Token, postingID uint) e
 }
 
 // SemuaPosting implements posting.Service.
-func (ps *PostingService) SemuaPosting(page int, limit int) ([]posting.Posting, error) {
+func (ps *PostingService) SemuaPosting(page int, limit int) ([]models.Posting, error) {
 	result, err := ps.r.GetTanpaPosting(page, limit)
 	if err != nil {
 		return nil, errors.New("failed to retrieve inserted coupon")
@@ -49,17 +50,17 @@ func (ps *PostingService) SemuaPosting(page int, limit int) ([]posting.Posting, 
 }
 
 // AddPosting implements posting.Service.
-func (ps *PostingService) AddPosting(token *golangjwt.Token, newPosting posting.Posting) (posting.Posting, error) {
+func (ps *PostingService) AddPosting(token *golangjwt.Token, newPosting models.Posting) (models.Posting, error) {
 	userId, err := jwt.ExtractToken(token)
 	if err != nil {
-		return posting.Posting{}, err
+		return models.Posting{}, err
 	}
 	result, err := ps.r.InsertPosting(userId, newPosting)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
-			return posting.Posting{}, errors.New("dobel input")
+			return models.Posting{}, errors.New("dobel input")
 		}
-		return posting.Posting{}, errors.New("terjadi kesalahan")
+		return models.Posting{}, errors.New("terjadi kesalahan")
 	}
 	return result, nil
 }

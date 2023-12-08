@@ -2,6 +2,7 @@ package handler
 
 import (
 	"be_medsos/features/comment"
+	"be_medsos/features/models"
 	"net/http"
 	"strconv"
 	"strings"
@@ -63,7 +64,7 @@ func (cc *CommentController) Add() echo.HandlerFunc {
 				"message": "input yang diberikan tidak sesuai",
 			})
 		}
-		var inputProses = new(comment.Comment)
+		var inputProses = new(models.Comment)
 		inputProses.PostingID = input.PostingID
 		inputProses.IsiComment = input.IsiComment
 
@@ -114,7 +115,7 @@ func (cc *CommentController) Update() echo.HandlerFunc {
 			})
 		}
 
-		var inputProcess = comment.Comment{
+		var inputProcess = models.Comment{
 			ID:         uint(commentID),
 			IsiComment: input.IsiComment,
 		}

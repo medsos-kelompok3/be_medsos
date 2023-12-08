@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"be_medsos/features/models"
 	"be_medsos/features/posting"
 	cld "be_medsos/utils/cld"
 	"context"
@@ -112,7 +113,7 @@ func (pc *PostingController) Update() echo.HandlerFunc {
 			})
 		}
 
-		var inputProcess = posting.Posting{
+		var inputProcess = models.Posting{
 			ID:            uint(postingID),
 			Caption:       input.Caption,
 			GambarPosting: link,
@@ -224,7 +225,7 @@ func (pc *PostingController) Add() echo.HandlerFunc {
 				})
 			}
 		}
-		var inputProcess = new(posting.Posting)
+		var inputProcess = new(models.Posting)
 		inputProcess.GambarPosting = link
 		inputProcess.Caption = input.Caption
 

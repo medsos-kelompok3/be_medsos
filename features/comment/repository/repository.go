@@ -2,21 +2,21 @@ package repository
 
 import (
 	"be_medsos/features/comment"
-	cr "be_medsos/features/posting/repository"
-	pr "be_medsos/features/user/repository"
+
+	"be_medsos/features/models"
 	"fmt"
 
 	"gorm.io/gorm"
 )
 
-type CommentModel struct {
-	gorm.Model
-	PostingID  uint
-	IsiComment string
-	UserName   string
-	UserID     uint
-	Avatar     string
-}
+// type CommentModel struct {
+// 	gorm.Model
+// 	PostingID  uint
+// 	IsiComment string
+// 	UserName   string
+// 	UserID     uint
+// 	Avatar     string
+// }
 
 type CommentQuery struct {
 	db *gorm.DB
@@ -24,7 +24,7 @@ type CommentQuery struct {
 
 // DeleteComment implements comment.Repository.
 func (cq *CommentQuery) DeleteComment(commentID uint) error {
-	var commentModel CommentModel
+	var commentModel models.CommentModel
 
 	if err := cq.db.First(&commentModel, commentID).Error; err != nil {
 		return err
@@ -43,27 +43,27 @@ func New(db *gorm.DB) comment.Repository {
 }
 
 // InsertComment implements comment.Repository.
-func (cq *CommentQuery) InsertComment(userID uint, postingID uint, newComment comment.Comment) (comment.Comment, error) {
-	var inputDB = new(CommentModel)
+func (cq *CommentQuery) InsertComment(userID uint, postingID uint, newComment models.Comment) (models.Comment, error) {
+	var inputDB = new(models.CommentModel)
 	inputDB.IsiComment = newComment.IsiComment
 
-	var user pr.UserModel
+	var user models.UserModel
 	if err := cq.db.First(&user, userID).Error; err != nil {
 		fmt.Println("Error mengambil data customer:", err)
-		return comment.Comment{}, err
+		return models.Comment{}, err
 	}
 	inputDB.UserName = user.Username
 
-	var posting cr.PostingModel
+	var posting models.PostingModel
 	if err := cq.db.First(&posting, postingID).Error; err != nil {
 		fmt.Println("Error mengambil data posting:", err)
-		return comment.Comment{}, err
+		return models.Comment{}, err
 	}
 	inputDB.PostingID = posting.ID
 
 	if err := cq.db.Create(&inputDB).Error; err != nil {
 		// Handle error saat menyimpan posting ke dalam database
-		return comment.Comment{}, err
+		return models.Comment{}, err
 	}
 
 	newComment.ID = inputDB.ID
@@ -74,19 +74,19 @@ func (cq *CommentQuery) InsertComment(userID uint, postingID uint, newComment co
 }
 
 // UpdateComment implements comment.Repository.
-func (cq *CommentQuery) UpdateComment(input comment.Comment) (comment.Comment, error) {
-	var proses CommentModel
+func (cq *CommentQuery) UpdateComment(input models.Comment) (models.Comment, error) {
+	var proses models.CommentModel
 	if err := cq.db.First(&proses, input.ID).Error; err != nil {
-		return comment.Comment{}, err
+		return models.Comment{}, err
 	}
 
 	proses.IsiComment = input.IsiComment
 
 	if err := cq.db.Save(&proses).Error; err != nil {
 
-		return comment.Comment{}, err
+		return models.Comment{}, err
 	}
-	result := comment.Comment{
+	result := models.Comment{
 		ID:         proses.ID,
 		IsiComment: proses.IsiComment,
 		PostingID:  proses.PostingID,

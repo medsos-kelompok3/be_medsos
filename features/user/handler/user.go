@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"be_medsos/features/models"
 	"be_medsos/features/user"
 	"be_medsos/helper/jwt"
 	cld "be_medsos/utils/cld"
@@ -39,7 +40,7 @@ func (uc *UserController) Register() echo.HandlerFunc {
 				"message": "input yang diberikan tidak sesuai",
 			})
 		}
-		var processInput = new(user.User)
+		var processInput = new(models.User)
 		processInput.Username = input.Username
 		processInput.Email = input.Email
 		processInput.Address = input.Address
@@ -205,7 +206,7 @@ func (uc *UserController) Update() echo.HandlerFunc {
 				"data":    nil,
 			})
 		}
-		if &userID == nil {
+		if userID == 0 {
 			return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 				"message": "Harap Login dulu",
 				"data":    nil,
@@ -227,7 +228,7 @@ func (uc *UserController) Update() echo.HandlerFunc {
 						"message": "ID user tidak valid",
 					})
 				}
-				var inputProcess = new(user.User)
+				var inputProcess = new(models.User)
 				inputProcess.Avatar = ""
 				inputProcess.ID = uint(userID)
 				inputProcess.Address = input.Address
@@ -303,14 +304,8 @@ func (uc *UserController) Update() echo.HandlerFunc {
 				})
 			}
 		}
-		userID, err := strconv.ParseUint(c.Param("id"), 10, 64)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]interface{}{
-				"message": "ID user tidak valid",
-			})
-		}
 
-		var inputProcess = new(user.User)
+		var inputProcess = new(models.User)
 		inputProcess.Avatar = link
 		inputProcess.ID = uint(userID)
 		inputProcess.Address = input.Address
@@ -366,7 +361,7 @@ func (uc *UserController) GetUserDetails() echo.HandlerFunc {
 				"data":    nil,
 			})
 		}
-		if &userID == nil {
+		if userID == 0 {
 			return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 				"message": "Harap Login dulu",
 				"data":    nil,
@@ -405,6 +400,45 @@ func (uc *UserController) GetUserDetails() echo.HandlerFunc {
 // get user profiles
 func (uc *UserController) GetUserProfiles() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		userID, err := strconv.ParseUint(c.Param("user_id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+				"data":    nil,
+			})
+		}
+		if userID == 0 {
+			return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+				"message": "Harap Login dulu",
+				"data":    nil,
+			})
+		}
 
+		proses, postings, err := uc.srv.GetUserProfiles(c.Get("user").(*gojwt.Token), uint(userID))
+		if err != nil {
+			if strings.Contains(err.Error(), "ditemukann") {
+				return c.JSON(http.StatusNotFound, map[string]interface{}{
+					"message": "User tidak ditemukan",
+					"data":    nil,
+				})
+			}
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Server error",
+				"data":    nil,
+			})
+		}
+		var response GetProfilResponse
+		response.ID = proses.ID
+		response.Username = proses.Username
+		response.Address = proses.Address
+		response.Bio = proses.Bio
+		response.Avatar = proses.Avatar
+
+		response.Posts = append(response.Posts, postings)
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "Data bberhasil dimuat",
+			"data":    response,
+		})
 	}
 }
