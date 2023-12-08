@@ -115,17 +115,19 @@ func (pq *PostingQuery) InsertPosting(userID uint, newPosting models.Posting) (m
 	return newPosting, nil
 }
 
-func (pq *PostingQuery) GetOne(id uint) (models.Posting, []models.Comment, error) {
+func (pq *PostingQuery) GetOne(id uint) (*models.Posting, []models.Comment, error) {
 	var post models.PostingModel
 	var comments []models.CommentModel
-	if err := pq.db.First(&post, id).Error; err != nil {
+	fmt.Println("repo1")
+	if err := pq.db.First(&post).Where("id = ?", id).Error; err != nil {
 		errors.New("pos tidak ditemukan")
-		return models.Posting{}, []models.Comment{}, err
+		return &models.Posting{}, []models.Comment{}, err
 	}
-	if err := pq.db.Find(&comments).Where("posting_id = ?", id); err != nil {
+
+	if err := pq.db.Find(&comments).Where("posting_id = ?", id); err.Error != nil {
 		if strings.Contains(err.Error.Error(), "not found") {
-			comments = nil
-			response := models.Posting{
+			fmt.Println("repo5")
+			response := &models.Posting{
 				ID:            post.ID,
 				Caption:       post.Caption,
 				GambarPosting: post.GambarPosting,
@@ -135,10 +137,12 @@ func (pq *PostingQuery) GetOne(id uint) (models.Posting, []models.Comment, error
 				CreatedAt:     post.CreatedAt.String(),
 				CommentCount:  int64(0),
 			}
-			return response, nil, nil
+			return response, []models.Comment{}, nil
 		}
+		fmt.Println("repo4")
+		return &models.Posting{}, []models.Comment{}, nil
 	}
-
+	fmt.Println("repo3")
 	// iterasi array komen
 	var commentsResp []models.Comment
 	for _, element := range comments {
@@ -155,7 +159,7 @@ func (pq *PostingQuery) GetOne(id uint) (models.Posting, []models.Comment, error
 
 	}
 	// iterasi respons posting
-	response := models.Posting{
+	response := &models.Posting{
 		ID:            post.ID,
 		Caption:       post.Caption,
 		GambarPosting: post.GambarPosting,
@@ -165,7 +169,7 @@ func (pq *PostingQuery) GetOne(id uint) (models.Posting, []models.Comment, error
 		CreatedAt:     post.CreatedAt.String(),
 		CommentCount:  int64(len(commentsResp)),
 	}
-	return response, nil, nil
+	return response, commentsResp, nil
 
 }
 

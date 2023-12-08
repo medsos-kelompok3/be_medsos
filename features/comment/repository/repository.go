@@ -53,6 +53,8 @@ func (cq *CommentQuery) InsertComment(userID uint, postingID uint, newComment mo
 		return models.Comment{}, err
 	}
 	inputDB.UserName = user.Username
+	inputDB.UserID = user.ID
+	inputDB.Avatar = user.Avatar
 
 	var posting models.PostingModel
 	if err := cq.db.First(&posting, postingID).Error; err != nil {
@@ -94,4 +96,22 @@ func (cq *CommentQuery) UpdateComment(input models.Comment) (models.Comment, err
 	}
 
 	return result, nil
+}
+
+func (cq *CommentQuery) GetOne(id uint) (models.Comment, error) {
+	var proses models.CommentModel
+	if err := cq.db.First(&proses).Where("id = ?", id).Error; err != nil {
+
+		return models.Comment{}, err
+	}
+	hasil := models.Comment{
+		ID:         proses.ID,
+		Avatar:     proses.Avatar,
+		IsiComment: proses.IsiComment,
+		UserName:   proses.UserName,
+		CreatedAt:  proses.CreatedAt.String(),
+		UserID:     proses.UserID,
+		PostingID:  proses.PostingID,
+	}
+	return hasil, nil
 }

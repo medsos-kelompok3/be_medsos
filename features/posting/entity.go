@@ -35,5 +35,5 @@ type Repository interface {
 	DeletePosting(postingID uint) error
 	UpdatePosting(input models.Posting) (models.Posting, error)
 	GetTanpaPosting(page, limit int) ([]models.Posting, error)
-	GetOne(id uint) (models.Posting, []models.Comment, error)
+	GetOne(id uint) (*models.Posting, []models.Comment, error)
 }
