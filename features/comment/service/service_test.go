@@ -1,9 +1,9 @@
 package service_test
 
 import (
-	"be_medsos/features/comment"
 	"be_medsos/features/comment/mocks"
 	"be_medsos/features/comment/service"
+	"be_medsos/features/models"
 	"be_medsos/helper/jwt"
 	"testing"
 
@@ -23,12 +23,12 @@ func TestAddComment(t *testing.T) {
 
 	userID := uint(1)
 	postingID := uint(2)
-	newComment := comment.Comment{
+	newComment := models.Comment{
 		PostingID:  uint(2),
 		IsiComment: "Test comment",
 	}
 
-	errorComment := comment.Comment{
+	errorComment := models.Comment{
 		PostingID:  uint(2),
 		IsiComment: "",
 	}
@@ -62,12 +62,12 @@ func TestUpdateComment(t *testing.T) {
 			"id": float64(1),
 		},
 	}
-	input := comment.Comment{
+	input := models.Comment{
 		IsiComment: "Updated comment",
 		PostingID:  uint(2),
 	}
 
-	salah := comment.Comment{
+	salah := models.Comment{
 		IsiComment: "",
 		PostingID:  uint(2),
 	}

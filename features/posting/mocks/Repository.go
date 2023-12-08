@@ -3,7 +3,8 @@
 package mocks
 
 import (
-	posting "be_medsos/features/posting"
+
+	"be_medsos/features/models"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -28,19 +29,19 @@ func (_m *Repository) DeletePosting(postingID uint) error {
 }
 
 // GetTanpaPosting provides a mock function with given fields: page, limit
-func (_m *Repository) GetTanpaPosting(page int, limit int) ([]posting.Posting, error) {
+func (_m *Repository) GetTanpaPosting(page int, limit int) ([]models.Posting, error) {
 	ret := _m.Called(page, limit)
 
-	var r0 []posting.Posting
+	var r0 []models.Posting
 	var r1 error
-	if rf, ok := ret.Get(0).(func(int, int) ([]posting.Posting, error)); ok {
+	if rf, ok := ret.Get(0).(func(int, int) ([]models.Posting, error)); ok {
 		return rf(page, limit)
 	}
-	if rf, ok := ret.Get(0).(func(int, int) []posting.Posting); ok {
+	if rf, ok := ret.Get(0).(func(int, int) []models.Posting); ok {
 		r0 = rf(page, limit)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]posting.Posting)
+			r0 = ret.Get(0).([]models.Posting)
 		}
 	}
 
@@ -54,21 +55,21 @@ func (_m *Repository) GetTanpaPosting(page int, limit int) ([]posting.Posting, e
 }
 
 // InsertPosting provides a mock function with given fields: userID, newPosting
-func (_m *Repository) InsertPosting(userID uint, newPosting posting.Posting) (posting.Posting, error) {
+func (_m *Repository) InsertPosting(userID uint, newPosting models.Posting) (models.Posting, error) {
 	ret := _m.Called(userID, newPosting)
 
-	var r0 posting.Posting
+	var r0 models.Posting
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, posting.Posting) (posting.Posting, error)); ok {
+	if rf, ok := ret.Get(0).(func(uint, models.Posting) (models.Posting, error)); ok {
 		return rf(userID, newPosting)
 	}
-	if rf, ok := ret.Get(0).(func(uint, posting.Posting) posting.Posting); ok {
+	if rf, ok := ret.Get(0).(func(uint, models.Posting) models.Posting); ok {
 		r0 = rf(userID, newPosting)
 	} else {
-		r0 = ret.Get(0).(posting.Posting)
+		r0 = ret.Get(0).(models.Posting)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint, posting.Posting) error); ok {
+	if rf, ok := ret.Get(1).(func(uint, models.Posting) error); ok {
 		r1 = rf(userID, newPosting)
 	} else {
 		r1 = ret.Error(1)
@@ -78,21 +79,21 @@ func (_m *Repository) InsertPosting(userID uint, newPosting posting.Posting) (po
 }
 
 // UpdatePosting provides a mock function with given fields: input
-func (_m *Repository) UpdatePosting(input posting.Posting) (posting.Posting, error) {
+func (_m *Repository) UpdatePosting(input models.Posting) (models.Posting, error) {
 	ret := _m.Called(input)
 
-	var r0 posting.Posting
+	var r0 models.Posting
 	var r1 error
-	if rf, ok := ret.Get(0).(func(posting.Posting) (posting.Posting, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.Posting) (models.Posting, error)); ok {
 		return rf(input)
 	}
-	if rf, ok := ret.Get(0).(func(posting.Posting) posting.Posting); ok {
+	if rf, ok := ret.Get(0).(func(models.Posting) models.Posting); ok {
 		r0 = rf(input)
 	} else {
-		r0 = ret.Get(0).(posting.Posting)
+		r0 = ret.Get(0).(models.Posting)
 	}
 
-	if rf, ok := ret.Get(1).(func(posting.Posting) error); ok {
+	if rf, ok := ret.Get(1).(func(models.Posting) error); ok {
 		r1 = rf(input)
 	} else {
 		r1 = ret.Error(1)

@@ -3,7 +3,8 @@
 package mocks
 
 import (
-	comment "be_medsos/features/comment"
+	
+	"be_medsos/features/models"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -28,21 +29,21 @@ func (_m *Repository) DeleteComment(commentID uint) error {
 }
 
 // InsertComment provides a mock function with given fields: userID, postingID, newComment
-func (_m *Repository) InsertComment(userID uint, postingID uint, newComment comment.Comment) (comment.Comment, error) {
+func (_m *Repository) InsertComment(userID uint, postingID uint, newComment models.Comment) (models.Comment, error) {
 	ret := _m.Called(userID, postingID, newComment)
 
-	var r0 comment.Comment
+	var r0 models.Comment
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, uint, comment.Comment) (comment.Comment, error)); ok {
+	if rf, ok := ret.Get(0).(func(uint, uint, models.Comment) (models.Comment, error)); ok {
 		return rf(userID, postingID, newComment)
 	}
-	if rf, ok := ret.Get(0).(func(uint, uint, comment.Comment) comment.Comment); ok {
+	if rf, ok := ret.Get(0).(func(uint, uint, models.Comment) models.Comment); ok {
 		r0 = rf(userID, postingID, newComment)
 	} else {
-		r0 = ret.Get(0).(comment.Comment)
+		r0 = ret.Get(0).(models.Comment)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint, uint, comment.Comment) error); ok {
+	if rf, ok := ret.Get(1).(func(uint, uint, models.Comment) error); ok {
 		r1 = rf(userID, postingID, newComment)
 	} else {
 		r1 = ret.Error(1)
@@ -52,21 +53,21 @@ func (_m *Repository) InsertComment(userID uint, postingID uint, newComment comm
 }
 
 // UpdateComment provides a mock function with given fields: input
-func (_m *Repository) UpdateComment(input comment.Comment) (comment.Comment, error) {
+func (_m *Repository) UpdateComment(input models.Comment) (models.Comment, error) {
 	ret := _m.Called(input)
 
-	var r0 comment.Comment
+	var r0 models.Comment
 	var r1 error
-	if rf, ok := ret.Get(0).(func(comment.Comment) (comment.Comment, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.Comment) (models.Comment, error)); ok {
 		return rf(input)
 	}
-	if rf, ok := ret.Get(0).(func(comment.Comment) comment.Comment); ok {
+	if rf, ok := ret.Get(0).(func(models.Comment) models.Comment); ok {
 		r0 = rf(input)
 	} else {
-		r0 = ret.Get(0).(comment.Comment)
+		r0 = ret.Get(0).(models.Comment)
 	}
 
-	if rf, ok := ret.Get(1).(func(comment.Comment) error); ok {
+	if rf, ok := ret.Get(1).(func(models.Comment) error); ok {
 		r1 = rf(input)
 	} else {
 		r1 = ret.Error(1)

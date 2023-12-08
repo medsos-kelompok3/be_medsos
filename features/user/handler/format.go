@@ -29,8 +29,19 @@ type LoginResponse struct {
 type GetResponse struct {
 	ID       uint   `json:"id"`
 	Username string `json:"username"`
+	Email    string `json:"email"`
+	Address  string `json:"address"`
 	Bio      string `json:"bio"`
 	Avatar   string `json:"avatar"`
+}
+
+type GetProfilResponse struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Address  string `json:"address"`
+	Bio      string `json:"bio"`
+	Avatar   string `json:"avatar"`
+	Posts    []any  `json:"posts"`
 }
 
 type PutRequest struct {

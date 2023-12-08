@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	comment "be_medsos/features/comment"
+	"be_medsos/features/models"
 
 	jwt "github.com/golang-jwt/jwt/v5"
 
@@ -16,21 +16,21 @@ type Service struct {
 }
 
 // AddComment provides a mock function with given fields: token, newComment
-func (_m *Service) AddComment(token *jwt.Token, newComment comment.Comment) (comment.Comment, error) {
+func (_m *Service) AddComment(token *jwt.Token, newComment models.Comment) (models.Comment, error) {
 	ret := _m.Called(token, newComment)
 
-	var r0 comment.Comment
+	var r0 models.Comment
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*jwt.Token, comment.Comment) (comment.Comment, error)); ok {
+	if rf, ok := ret.Get(0).(func(*jwt.Token, models.Comment) (models.Comment, error)); ok {
 		return rf(token, newComment)
 	}
-	if rf, ok := ret.Get(0).(func(*jwt.Token, comment.Comment) comment.Comment); ok {
+	if rf, ok := ret.Get(0).(func(*jwt.Token, models.Comment) models.Comment); ok {
 		r0 = rf(token, newComment)
 	} else {
-		r0 = ret.Get(0).(comment.Comment)
+		r0 = ret.Get(0).(models.Comment)
 	}
 
-	if rf, ok := ret.Get(1).(func(*jwt.Token, comment.Comment) error); ok {
+	if rf, ok := ret.Get(1).(func(*jwt.Token, models.Comment) error); ok {
 		r1 = rf(token, newComment)
 	} else {
 		r1 = ret.Error(1)
@@ -54,21 +54,21 @@ func (_m *Service) HapusComment(token *jwt.Token, commentID uint) error {
 }
 
 // UpdateComment provides a mock function with given fields: token, input
-func (_m *Service) UpdateComment(token *jwt.Token, input comment.Comment) (comment.Comment, error) {
+func (_m *Service) UpdateComment(token *jwt.Token, input models.Comment) (models.Comment, error) {
 	ret := _m.Called(token, input)
 
-	var r0 comment.Comment
+	var r0 models.Comment
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*jwt.Token, comment.Comment) (comment.Comment, error)); ok {
+	if rf, ok := ret.Get(0).(func(*jwt.Token, models.Comment) (models.Comment, error)); ok {
 		return rf(token, input)
 	}
-	if rf, ok := ret.Get(0).(func(*jwt.Token, comment.Comment) comment.Comment); ok {
+	if rf, ok := ret.Get(0).(func(*jwt.Token, models.Comment) models.Comment); ok {
 		r0 = rf(token, input)
 	} else {
-		r0 = ret.Get(0).(comment.Comment)
+		r0 = ret.Get(0).(models.Comment)
 	}
 
-	if rf, ok := ret.Get(1).(func(*jwt.Token, comment.Comment) error); ok {
+	if rf, ok := ret.Get(1).(func(*jwt.Token, models.Comment) error); ok {
 		r1 = rf(token, input)
 	} else {
 		r1 = ret.Error(1)
