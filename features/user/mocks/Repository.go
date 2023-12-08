@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	user "be_medsos/features/user"
+	"be_medsos/features/models"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -14,11 +14,11 @@ type Repository struct {
 }
 
 // AddUser provides a mock function with given fields: input
-func (_m *Repository) AddUser(input user.User) error {
+func (_m *Repository) AddUser(input models.User) error {
 	ret := _m.Called(input)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(user.User) error); ok {
+	if rf, ok := ret.Get(0).(func(models.User) error); ok {
 		r0 = rf(input)
 	} else {
 		r0 = ret.Error(0)
@@ -42,19 +42,19 @@ func (_m *Repository) DeleteUser(userID uint) error {
 }
 
 // GetUserByID provides a mock function with given fields: userID
-func (_m *Repository) GetUserByID(userID uint) (*user.User, error) {
+func (_m *Repository) GetUserByID(userID uint) (*models.User, error) {
 	ret := _m.Called(userID)
 
-	var r0 *user.User
+	var r0 *models.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*user.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(uint) (*models.User, error)); ok {
 		return rf(userID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) *user.User); ok {
+	if rf, ok := ret.Get(0).(func(uint) *models.User); ok {
 		r0 = rf(userID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*user.User)
+			r0 = ret.Get(0).(*models.User)
 		}
 	}
 
@@ -68,18 +68,18 @@ func (_m *Repository) GetUserByID(userID uint) (*user.User, error) {
 }
 
 // GetUserByUsername provides a mock function with given fields: username
-func (_m *Repository) GetUserByUsername(username string) (user.User, error) {
+func (_m *Repository) GetUserByUsername(username string) (models.User, error) {
 	ret := _m.Called(username)
 
-	var r0 user.User
+	var r0 models.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string) (user.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(string) (models.User, error)); ok {
 		return rf(username)
 	}
-	if rf, ok := ret.Get(0).(func(string) user.User); ok {
+	if rf, ok := ret.Get(0).(func(string) models.User); ok {
 		r0 = rf(username)
 	} else {
-		r0 = ret.Get(0).(user.User)
+		r0 = ret.Get(0).(models.User)
 	}
 
 	if rf, ok := ret.Get(1).(func(string) error); ok {
@@ -92,18 +92,18 @@ func (_m *Repository) GetUserByUsername(username string) (user.User, error) {
 }
 
 // Login provides a mock function with given fields: username
-func (_m *Repository) Login(username string) (user.User, error) {
+func (_m *Repository) Login(username string) (models.User, error) {
 	ret := _m.Called(username)
 
-	var r0 user.User
+	var r0 models.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string) (user.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(string) (models.User, error)); ok {
 		return rf(username)
 	}
-	if rf, ok := ret.Get(0).(func(string) user.User); ok {
+	if rf, ok := ret.Get(0).(func(string) models.User); ok {
 		r0 = rf(username)
 	} else {
-		r0 = ret.Get(0).(user.User)
+		r0 = ret.Get(0).(models.User)
 	}
 
 	if rf, ok := ret.Get(1).(func(string) error); ok {
@@ -116,21 +116,21 @@ func (_m *Repository) Login(username string) (user.User, error) {
 }
 
 // UpdateUser provides a mock function with given fields: input
-func (_m *Repository) UpdateUser(input user.User) (user.User, error) {
+func (_m *Repository) UpdateUser(input models.User) (models.User, error) {
 	ret := _m.Called(input)
 
-	var r0 user.User
+	var r0 models.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(user.User) (user.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.User) (models.User, error)); ok {
 		return rf(input)
 	}
-	if rf, ok := ret.Get(0).(func(user.User) user.User); ok {
+	if rf, ok := ret.Get(0).(func(models.User) models.User); ok {
 		r0 = rf(input)
 	} else {
-		r0 = ret.Get(0).(user.User)
+		r0 = ret.Get(0).(models.User)
 	}
 
-	if rf, ok := ret.Get(1).(func(user.User) error); ok {
+	if rf, ok := ret.Get(1).(func(models.User) error); ok {
 		r1 = rf(input)
 	} else {
 		r1 = ret.Error(1)
