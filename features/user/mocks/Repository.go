@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	"be_medsos/features/models"
+	models "be_medsos/features/models"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -39,6 +39,39 @@ func (_m *Repository) DeleteUser(userID uint) error {
 	}
 
 	return r0
+}
+
+// GetProfil provides a mock function with given fields: id
+func (_m *Repository) GetProfil(id uint) (models.User, []models.Posting, error) {
+	ret := _m.Called(id)
+
+	var r0 models.User
+	var r1 []models.Posting
+	var r2 error
+	if rf, ok := ret.Get(0).(func(uint) (models.User, []models.Posting, error)); ok {
+		return rf(id)
+	}
+	if rf, ok := ret.Get(0).(func(uint) models.User); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(models.User)
+	}
+
+	if rf, ok := ret.Get(1).(func(uint) []models.Posting); ok {
+		r1 = rf(id)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).([]models.Posting)
+		}
+	}
+
+	if rf, ok := ret.Get(2).(func(uint) error); ok {
+		r2 = rf(id)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // GetUserByID provides a mock function with given fields: userID

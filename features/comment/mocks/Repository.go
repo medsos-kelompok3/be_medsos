@@ -3,8 +3,7 @@
 package mocks
 
 import (
-	
-	"be_medsos/features/models"
+	models "be_medsos/features/models"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -26,6 +25,30 @@ func (_m *Repository) DeleteComment(commentID uint) error {
 	}
 
 	return r0
+}
+
+// GetOne provides a mock function with given fields: id
+func (_m *Repository) GetOne(id uint) (models.Comment, error) {
+	ret := _m.Called(id)
+
+	var r0 models.Comment
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint) (models.Comment, error)); ok {
+		return rf(id)
+	}
+	if rf, ok := ret.Get(0).(func(uint) models.Comment); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(models.Comment)
+	}
+
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // InsertComment provides a mock function with given fields: userID, postingID, newComment

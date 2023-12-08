@@ -3,8 +3,7 @@
 package mocks
 
 import (
-
-	"be_medsos/features/models"
+	models "be_medsos/features/models"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -26,6 +25,41 @@ func (_m *Repository) DeletePosting(postingID uint) error {
 	}
 
 	return r0
+}
+
+// GetOne provides a mock function with given fields: id
+func (_m *Repository) GetOne(id uint) (*models.Posting, []models.Comment, error) {
+	ret := _m.Called(id)
+
+	var r0 *models.Posting
+	var r1 []models.Comment
+	var r2 error
+	if rf, ok := ret.Get(0).(func(uint) (*models.Posting, []models.Comment, error)); ok {
+		return rf(id)
+	}
+	if rf, ok := ret.Get(0).(func(uint) *models.Posting); ok {
+		r0 = rf(id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Posting)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(uint) []models.Comment); ok {
+		r1 = rf(id)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).([]models.Comment)
+		}
+	}
+
+	if rf, ok := ret.Get(2).(func(uint) error); ok {
+		r2 = rf(id)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // GetTanpaPosting provides a mock function with given fields: page, limit
