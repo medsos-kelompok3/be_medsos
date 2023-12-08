@@ -5,6 +5,7 @@ import (
 	"be_medsos/features/posting"
 	"be_medsos/helper/jwt"
 	"errors"
+	"fmt"
 	"strings"
 
 	golangjwt "github.com/golang-jwt/jwt/v5"
@@ -63,4 +64,16 @@ func (ps *PostingService) AddPosting(token *golangjwt.Token, newPosting models.P
 		return models.Posting{}, errors.New("terjadi kesalahan")
 	}
 	return result, nil
+}
+
+func (ps *PostingService) GetOne(id uint) (models.Posting, []models.Comment, error) {
+	fmt.Println("service cekpoin1")
+	post, comments, err := ps.r.GetOne(id)
+	if err != nil {
+		if strings.Contains(err.Error(), "") {
+			return models.Posting{}, []models.Comment{}, err
+		}
+		return models.Posting{}, []models.Comment{}, err
+	}
+	return *post, comments, nil
 }

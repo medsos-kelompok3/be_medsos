@@ -1,6 +1,9 @@
 package handler
 
-import "mime/multipart"
+import (
+	"be_medsos/features/models"
+	"mime/multipart"
+)
 
 type PostingRequest struct {
 	Caption       string `json:"caption" form:"caption"`
@@ -12,6 +15,8 @@ type PostingResponse struct {
 	Caption       string `json:"caption"`
 	GambarPosting string `json:"gambar_posting"`
 	UserName      string `json:"user_name"`
+	Avatar        string `json:"avatar"`
+	CreatedAt     string `json:"createdat"`
 }
 
 type PutPostingRequest struct {
@@ -25,4 +30,17 @@ type PutResponse struct {
 	Caption       string `json:"caption" form:"caption"`
 	GambarPosting string `json:"gambar_posting" form:"gambar_posting"`
 	UserName      string `json:"user_name"`
+	Avatar        string `json:"avatar"`
+
+	CreatedAt string `json:"createdat"`
+}
+
+type GetResponse struct {
+	ID            uint             `json:"id"`
+	Caption       string           `json:"caption"`
+	GambarPosting string           `json:"gambar_posting"`
+	UserName      string           `json:"user_name"`
+	Avatar        string           `json:"avatar"`
+	CreatedAt     string           `json:"createdat"`
+	Comments      []models.Comment `json:"comments"`
 }

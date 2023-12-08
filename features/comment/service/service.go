@@ -55,3 +55,20 @@ func (cs *CommentService) UpdateComment(token *golangjwt.Token, input models.Com
 	}
 	return respons, nil
 }
+
+func (cs *CommentService) GetOne(token *golangjwt.Token, commentID uint) (models.Comment, error) {
+	userId, err := jwt.ExtractToken(token)
+	if err != nil {
+		return models.Comment{}, err
+	}
+	if userId == 0 {
+		errors.New("login dulu")
+		return models.Comment{}, err
+	}
+	hasil, err := cs.c.GetOne(commentID)
+	if err != nil {
+		return models.Comment{}, err
+	}
+	return hasil, nil
+
+}
