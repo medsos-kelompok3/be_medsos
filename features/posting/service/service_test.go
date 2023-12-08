@@ -1,7 +1,7 @@
 package service_test
 
 import (
-	"be_medsos/features/posting"
+	"be_medsos/features/models"
 	"be_medsos/features/posting/mocks"
 	"be_medsos/features/posting/service"
 	"be_medsos/helper/jwt"
@@ -22,8 +22,8 @@ func TestAddPosting(t *testing.T) {
 	repo := mocks.NewRepository(t)
 	m := service.New(repo)
 
-	var repoData = posting.Posting{Caption: "hoax", GambarPosting: "wwww.facebook.com", UserName: "budi"}
-	var falseData = posting.Posting{}
+	var repoData = models.Posting{Caption: "hoax", GambarPosting: "wwww.facebook.com", UserName: "budi"}
+	var falseData = models.Posting{}
 
 	t.Run("Success Case", func(t *testing.T) {
 		repo.On("InsertPosting", userID, repoData).Return(repoData, nil).Once()
@@ -54,7 +54,7 @@ func TestSemuaPosting(t *testing.T) {
 		page := 1
 		limit := 5
 
-		repo.On("GetTanpaPosting", page, limit).Return([]posting.Posting{
+		repo.On("GetTanpaPosting", page, limit).Return([]models.Posting{
 			{ID: 1, Caption: "Test Caption 1", GambarPosting: "www.fawa.com"},
 			{ID: 2, Caption: "Test Caption 2", GambarPosting: "www.fawa.com"},
 		}, nil).Once()
@@ -86,8 +86,8 @@ func TestUpdatePosting(t *testing.T) {
 	repo := mocks.NewRepository(t)
 	m := service.New(repo)
 
-	var repoData = posting.Posting{ID: 1, Caption: "updated caption", GambarPosting: "wwww.updated.com", UserName: "budi"}
-	var falseData = posting.Posting{ID: 2}
+	var repoData = models.Posting{ID: 1, Caption: "updated caption", GambarPosting: "wwww.updated.com", UserName: "budi"}
+	var falseData = models.Posting{ID: 2}
 
 	t.Run("Success Case", func(t *testing.T) {
 		repo.On("UpdatePosting", repoData).Return(repoData, nil).Once()
