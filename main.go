@@ -5,6 +5,7 @@ import (
 	ch "be_medsos/features/comment/handler"
 	cr "be_medsos/features/comment/repository"
 	cs "be_medsos/features/comment/service"
+	"be_medsos/features/models"
 	ph "be_medsos/features/posting/handler"
 	pr "be_medsos/features/posting/repository"
 	ps "be_medsos/features/posting/service"
@@ -32,7 +33,7 @@ func main() {
 		e.Logger.Fatal("tidak bisa start bro", err.Error())
 	}
 
-	db.AutoMigrate(&ur.UserModel{}, &pr.PostingModel{}, &cr.CommentModel{})
+	db.AutoMigrate(&models.UserModel{}, &models.PostingModel{}, &models.CommentModel{})
 
 	ekrip := ek.New()
 	userRepo := ur.New(db)

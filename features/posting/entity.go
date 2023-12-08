@@ -19,6 +19,7 @@ type Handler interface {
 	GetAll() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
+	// GetOne() echo.HandlerFunc
 }
 
 type Service interface {
