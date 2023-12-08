@@ -206,7 +206,7 @@ func (uc *UserController) Update() echo.HandlerFunc {
 				"data":    nil,
 			})
 		}
-		if &userID == nil {
+		if userID == 0 {
 			return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 				"message": "Harap Login dulu",
 				"data":    nil,
@@ -355,7 +355,7 @@ func (uc *UserController) GetUserDetails() echo.HandlerFunc {
 				"data":    nil,
 			})
 		}
-		if &userID == nil {
+		if userID == 0 {
 			return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 				"message": "Harap Login dulu",
 				"data":    nil,
