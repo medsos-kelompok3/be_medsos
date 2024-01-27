@@ -1,6 +1,6 @@
-# be_medsos API
+# Circle API
 
-Medsos App is a simple social media application that allows users to create posts, comment on posts, edit comments, edit user data, and delete accounts. This repository contains the frontend code for the Medsos App.
+Circle App is a simple social media application that allows users to create posts, comment on posts, edit comments, edit user data, and delete accounts. This repository contains the frontend code for the Circle App.
 
 ## Table of Contents
 - [Getting Started](#getting-started)
@@ -32,6 +32,10 @@ Medsos App is a simple social media application that allows users to create post
 
    ```bash
     go mod tidy
+
+### ERD
+![image](https://github.com/medsos-kelompok3/be_medsos/assets/73748420/bf9386aa-fb64-42a4-bb5e-7ff6475062bf)
+
 
 ### API
 
